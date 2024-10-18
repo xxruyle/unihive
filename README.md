@@ -5,7 +5,7 @@ Serving the academic discourse.
 
 A project made for EECS 581 (Software Engineering II) 
 
-![]("app/static/unihive_proof_of_concept.png")
+![](app/static/unihive_proof_of_concept.png)
 
 ## Setup 
 1) Make a virtual environment
@@ -26,7 +26,7 @@ $ pip install Flask
 ## Usage 
 In the project root directory: 
 ```
-$ flask --app flaskr/main run --debug
+$ flask --app app/main run --debug
 ```
 
 Then open the app using the url in the terminal. 
