@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Forum</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+    <a class="navbar-brand" href="#">UniHive</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Topics</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Contact</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Trending Posts</h2>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+                <img src="https://via.placeholder.com/40" class="rounded-circle mr-2" alt="User">
+                <div>
+                    <h6 class="mb-0">johnanon</h6>
+                    <small class="text-muted">Posted on Oct 17, 2024</small>
+                </div>
+            </div>
+            <h5 class="card-title">Midterm 1</h5>
+            <p class="card-text">How did it go for you all</p>
+            <a href="#" class="btn btn-primary">See Comments (2521)</a>
+            <div class="mt-2">
+                <small>Posted in <a href="#" class="text-primary">KU/EECS/563</a></small>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+                <img src="https://via.placeholder.com/40" class="rounded-circle mr-2" alt="User">
+                <div>
+                    <h6 class="mb-0">timanon</h6>
+                    <small class="text-muted">Posted on Oct 16, 2024</small>
+                </div>
+            </div>
+            <h5 class="card-title">EECS 10000</h5>
+            <p class="card-text">I need a job...</p>
+            <a href="#" class="btn btn-primary">See Comments (1002)</a>
+            <div class="mt-2">
+                <small>Posted in <a href="#" class="text-primary">KU/EECS/10000</a></small>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+                <img src="https://via.placeholder.com/40" class="rounded-circle mr-2" alt="User">
+                <div>
+                    <h6 class="mb-0">581anonguy</h6>
+                    <small class="text-muted">Posted on Oct 15, 2024</small>
+                </div>
+            </div>
+            <h5 class="card-title">Professor David Johnson</h5>
+            <p class="card-text">I think he's a great professor! What do you guys think?</p>
+            <a href="#" class="btn btn-primary">See Comments (102)</a>
+            <div class="mt-2">
+                <small>Posted in <a href="#" class="text-primary">KU/EECS/581</a></small>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mt-5 mb-4">Create a Post</h2>
+    <form>
+        <div class="form-group">
+            <label for="postTitle">Post Title</label>
+            <input type="text" class="form-control" id="postTitle" placeholder="Enter post title" required>
+        </div>
+        <div class="form-group">
+            <label for="postContent">Post Content</label>
+            <textarea class="form-control" id="postContent" rows="5" placeholder="Enter your post content" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="universityLink">University Link</label>
+            <input type="url" class="form-control" id="universityLink" placeholder="Enter university page URL" required>
+        </div>
+        <button type="submit" class="btn btn-success">Submit Post</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
