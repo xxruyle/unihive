@@ -5,7 +5,7 @@ Serving the academic discourse.
 
 A project made for EECS 581 (Software Engineering II) 
 
-![](app/static/unihive_proof_of_concept.png)
+![]("app/static/unihive_proof_of_concept.png")
 
 ## Setup 
 1) Make a virtual environment
