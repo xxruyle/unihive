@@ -1,3 +1,4 @@
+posts = []
 
 class Post: 
     def __init__(self,university_id, course_id, user): 

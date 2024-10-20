@@ -16,16 +16,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
+              <a class="nav-link active" aria-current="page" href="{{url_for('home')}}">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Profile</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Universities</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
           </li>
         </ul>
       </div>
@@ -34,8 +31,16 @@
 
   <!-- Sidebar -->
   <div class="sidebar">
-    <h2 class="text-center text-white">Universities</h2>
+    <h4 class="text-center text-white">Universities</h2>
     {% block sidebar_content %} 
+    {% endblock %}
+    <a href="{{url_for('create_university')}}" class="btn btn-primary btn-lg" role="button" aria-disabled="true">Create University</a>
+
+    <hr>
+
+    <h4 class="text-center text-white">Resources</h2>
+
+    {% block sidebar_content_about %} 
     {% endblock %}
   </div>
 
@@ -43,11 +48,9 @@
   <div class="content">
       <div class="container">
           <h1 class="my-5 text-left">{% block content_title %}{% endblock %}</h1>
-      </div>
+          <h2 class="my-4 text-left">{% block content_subtitle %}{% endblock %}</h2> </div>
 
       {% block content_main %}{% endblock %}
-
-
 </div>
 
   <!-- Bootstrap JS (No Popper.js) -->
