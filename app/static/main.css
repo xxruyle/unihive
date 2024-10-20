@@ -1,6 +1,66 @@
-body {
-    background-color: #f8f9fa;
-}
+    /* Sidebar Styles */
+    .sidebar {
+      position: fixed;
+      top: 55px;  /* To adjust for the navbar height */
+      left: 0;
+      width: 250px;
+      height: 100vh;  /* Full height minus navbar height */
+      background-color: #343a40;
+      color: white;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      text-align: left;
+      display: block;
+      transition: background-color 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: #495057;
+    }
+
+    /* Content Styles */
+    .content {
+      margin-left: 250px; /* Space for the sidebar */
+      padding: 20px;
+      margin-top: 60px;  /* Space for the navbar */
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;  /* To ensure it sits above the sidebar */
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 200px;
+      }
+
+      .content {
+        margin-left: 200px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .sidebar {
+        width: 150px;
+      }
+
+      .content {
+        margin-left: 150px;
+      }
+    }
 
 .card {
     border-radius: 10px;
@@ -10,12 +70,3 @@ body {
 .card-title {
     font-weight: bold;
 }
-
-.form-control {
-    border-radius: 5px;
-}
-
-.btn {
-    border-radius: 5px;
-}
-
