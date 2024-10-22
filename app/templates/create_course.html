@@ -3,3 +3,26 @@
 
 {% block content_title %}Create Course - {{uni.upper()}}{% endblock %}
 {% block content_subtitle %}Course Creation Form{% endblock %}
+
+{% block content_main %}
+<form action="create-course" method="post">
+  <div class="form-group">
+    <label for="university">University Name</label>
+    <input type="text" class="form-control" name="university" for="university" id="university" placeholder="KU">
+  </div>
+
+  <div class="form-group">
+    <label for="department">Department</label>
+    <input type="text" class="form-control" name="department" id="department" placeholder="EECS">
+  </div>
+
+  <div class="form-group">
+    <label for="course-number">Course Number</label>
+    <input type="text" class="form-control" name="course-number" id="course-number" placeholder="581">
+  </div>
+
+<button type="submit" class="btn btn-primary">Submit</button>
+</form>
+  {% endblock %}
+
+
