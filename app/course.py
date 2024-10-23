@@ -1,4 +1,3 @@
-courses = []
 class Course: 
     def __init__(self, id, course_id, department, name): 
         self.id = id # db id  

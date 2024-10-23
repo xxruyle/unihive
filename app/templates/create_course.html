@@ -5,9 +5,22 @@
 {% block content_subtitle %}Course Creation Form{% endblock %}
 
 {% block content_main %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+    <div class="alert alert-danger" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+
 <form action="create-course" method="post">
   <div class="form-group">
-    <label for="university">University Name</label>
+    <label for="university">University Acronym</label>
     <input type="text" class="form-control" name="university" for="university" id="university" placeholder="KU">
   </div>
 

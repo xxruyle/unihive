@@ -1,23 +1,21 @@
 {% extends 'base.html' %}
 
 {% block sidebar_content %} 
-<a href="#">University 1</a>
-<a href="#">University 2</a>
-<a href="#">University 3</a>
-<a href="#">University 4</a>
-<a href="#">University 5</a>
 {% endblock %}
 
-{% block content_title %}University Home - {{uni.upper()}}{% endblock %}
+{% block content_title %}University Home - {{university_acro}}{% endblock %}
 {% block content_subtitle %}Trending Courses{% endblock %}
 
 
 {% block content_main %}
+
 <div class="list-group">
-  <a href="#" class="list-group-item list-group-item-action">EECS 581</a>
-  <a href="#" class="list-group-item list-group-item-action">EECS 468</a>
-  <a href="#" class="list-group-item list-group-item-action">EECS 678</a>
+    {% for course in courses %}
+    <a href="#" class="list-group-item list-group-item-action">{{course}}</a>
+    {% endfor %}
 </div>
+
+  <!-- <a href="#" class="list-group-item list-group-item-action">EECS 581</a> -->
 
 <a href="{{url_for('create_course')}}"><button type="button" class="btn btn-dark mt-4">Create Course</button></a>
 {% endblock %}
