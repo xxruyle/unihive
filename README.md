@@ -1,11 +1,10 @@
 # UniHive 
-UniHive is what is happening on your campus academically. It's where you can learn what courses people are taking, studying (or cramming).  
+UniHive is what is happening on your campus academically.   
 
 Serving the academic discourse. 
 
 A project made for EECS 581 (Software Engineering II) 
-
-![](app/static/unihive_proof_of_concept.png)
+![](app/static/unihive_course_page)
 
 ## Setup 
 1) Make a virtual environment
@@ -23,15 +22,20 @@ $ python -m venv .venv
 $ pip install Flask
 ```
 
+Or follow the official Flask docs: https://flask.palletsprojects.com/en/3.0.x/installation/
+
 ## Usage 
 In the project root directory: 
 ```
 $ flask --app app/main run --debug
 ```
-
 Then open the app using the url in the terminal. 
 
-Or follow the official Flask docs: https://flask.palletsprojects.com/en/3.0.x/installation/
+Alternatively: 
+- you can run it with python 
+```
+$ python3 app/main.py
+```
 
 ## Tech Stack 
 - Flask 

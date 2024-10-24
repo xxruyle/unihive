@@ -1,10 +1,24 @@
+<!-- Filename: university_home.py -->
+<!-- Description: This html file shows the university home page -->
+<!-- Inputs: base.html -->
+<!-- Output:  -->
+<!-- Authors: Xavier Ruyle -->
+<!-- Creation Date: 10/24/2024 -->
+
 {% extends 'base.html' %}
 
 {% block sidebar_content %} 
 {% endblock %}
 
 {% block content_title %}University Home - {{university_acro}}{% endblock %}
-{% block content_subtitle %}Trending Courses{% endblock %}
+{% block content_subtitle %}
+
+<form action="{{course}}" method="post">
+<input type="hidden">
+<button type="submit" class="btn btn-info mt-3" name="follow-btn" value="follow">Follow</button>
+</form><br>
+Trending Courses
+{% endblock %}
 
 
 {% block content_main %}

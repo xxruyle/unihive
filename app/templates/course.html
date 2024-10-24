@@ -1,10 +1,22 @@
+<!-- Filename: course.py -->
+<!-- Description: This html file shows the course home page of the app  which allows the user to see course info, and submit new course info and professors -->
+<!-- Inputs: base.html -->
+<!-- Output:  -->
+<!-- Authors: Xavier Ruyle -->
+<!-- Creation Date: 10/24/2024 -->
+
 {% extends 'base.html' %}
 
 {% block content_title %}{{course.upper()}}{% endblock %}
-{% block content_subtitle %}Posts{% endblock %}
+{% block content_subtitle %}
+<form action="{{course}}" method="post">
+<input type="hidden">
+<button type="submit" class="btn btn-info mt-3" name="follow-btn" value="follow">Follow</button>
+</form><br>
+Posts
+{% endblock %}
 
 {% block content_main %}
-
       <div class="card mb-4">
         <div class="card-body">
             <div class="d-flex align-items-center mb-3">
@@ -18,7 +30,7 @@
             <p class="card-text">How did it go for you all? Lorem ipsum blalalalala lalaalala l alalalala</p>
             <a href="#" class="btn btn-primary">See Comments (2521)</a>
             <div class="mt-2">
-                <small>Posted in <a href="{{url_for('course', university=uni, course=course)}}" class="text-primary">{{uni.upper()}}/{{course.upper()}}</a></small>
+                <small>Posted in <a href="{{url_for('course', university_acro=uni, course=course)}}" class="text-primary">{{uni.upper()}}/{{course.upper()}}</a></small>
             </div>
         </div>
     </div>
@@ -66,12 +78,24 @@
     <form>
 
     <h2 class="mt-5">Past Professors</h2> 
-    <div class="card" style="width: 18rem; font-size: 14px">
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item">David Johnson (placeholder)</li>
-      </ul>
+    <div class="card mb-3" style="width: 18rem; font-size: 14px">
+        {% for professor in UNIVERSITIES[uni].courses[course].professors %}
+          <ul class="list-group list-group-flush">
+              <li class="list-group-item">{{professor}}</li>
+          </ul>
+        {% endfor %}
     </div>
 
+    <form action="{{course}}" method="post">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="">First and Last Name</span>
+          </div>
+          <input type="text" class="first-name" name="first-name">
+          <input type="text" class="last-name" name="last-name">
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
 {% endblock %}
 
 
