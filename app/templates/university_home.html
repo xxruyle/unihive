@@ -11,7 +11,7 @@
 
 <div class="list-group">
     {% for course in courses %}
-    <a href="#" class="list-group-item list-group-item-action">{{course}}</a>
+    <a href="{{url_for('course', university_acro=university_acro, course=course)}}" class="list-group-item list-group-item-action">{{course}}</a>
     {% endfor %}
 </div>
 
