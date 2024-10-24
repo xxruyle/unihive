@@ -4,7 +4,7 @@ UniHive is what is happening on your campus academically.
 Serving the academic discourse. 
 
 A project made for EECS 581 (Software Engineering II) 
-![](app/static/unihive_course_page)
+![](app/static/unihive_course_page.png)
 
 ## Setup 
 1) Make a virtual environment
