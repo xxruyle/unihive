@@ -11,6 +11,7 @@ from course import *
 from session import * 
 from user import * 
 from db_util import * 
+import db
 
 app = Flask(__name__) # initialize flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # flask app secret key required for form requests
