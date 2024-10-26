@@ -19,6 +19,7 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # flask app secret key required for for
 def home(): 
     '''
     Route function for root page home.html
+    Base html Template Dependecies: followed universities, followed courses
     '''
     return render_template('home.html', UNIVERSITIES=UNIVERSITIES, USERS=USERS, SESSION=SESSION)
 
@@ -27,6 +28,7 @@ def home():
 def university(university_acro=None, university_name=None):
     '''
     Route function for university_home.html
+    Template Dependecies: University, University courses, followed universities, followed courses
     '''
     # detect if there is a follow request for the university 
     if request.method == "POST": 
@@ -42,6 +44,7 @@ def university(university_acro=None, university_name=None):
 def create_university():
     '''
     Route function for create_university.html
+    Template Dependecies: Followed universities, followed courses
     '''
     # detect POST request 
     if request.method == "POST": 
@@ -62,6 +65,7 @@ def create_university():
 def course(university_acro=None, course=None): 
     '''
     Route function for course.html
+    Template Dependecies: University acro, Course, followed universities, followed courses
     '''
     # detect if there was a post request 
     if request.method == "POST": 
@@ -93,6 +97,7 @@ def course(university_acro=None, course=None):
 def create_course(university="placeholder"): 
     '''
     Route function for create course page 
+    Template Dependecies: followed universities, followed courses
     '''
     # detect post request 
     if request.method == "POST": 
