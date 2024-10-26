@@ -27,13 +27,6 @@ Or follow the official Flask docs: https://flask.palletsprojects.com/en/3.0.x/in
 ## Usage 
 In the project root directory: 
 ```
-$ flask --app app/main run --debug
-```
-Then open the app using the url in the terminal. 
-
-Alternatively: 
-- you can run it with python 
-```
 $ python3 app/main.py
 ```
 
