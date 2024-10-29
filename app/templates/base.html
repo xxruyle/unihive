@@ -41,7 +41,7 @@
     <h5 class="text-center text-white">Followed Universities</h2>
     <!-- <a href="#">University of Test</a> -->
     {% for followed_university in USERS[SESSION.current_user_id].followed_universities %}
-    <a href="{{url_for('university', university_acro=followed_university.acronym)}}">{{UNIVERSITIES[followed_university.acronym].full_name}}</a>
+    <a href="{{url_for('university', university_acro=followed_university.acronym)}}">{{followed_university.name}}</a>
     {% endfor %}
 
 
@@ -51,7 +51,7 @@
 
     <h5 class="text-center text-white mt-4">Followed Courses</h2>
     {% for followed_course in USERS[SESSION.current_user_id].followed_courses %}
-    <a href="{{url_for('course', university_acro=followed_course.university_acro, course=followed_course.name_combined)}}">{{followed_course.university_acro}}/{{followed_course.name_combined}}</a>
+    <a href="{{url_for('course', university_acro=followed_course.university.acronym, course=followed_course.name_combined)}}">{{followed_course.university_acro}}/{{followed_course.name_combined}}</a>
     {% endfor %}
 
     <h4 class="text-center text-white">Resources</h2>

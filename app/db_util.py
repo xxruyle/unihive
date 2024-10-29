@@ -9,33 +9,72 @@ from university import *
 from course import * 
 from session import * 
 from user import * 
+from db import query
 
-def store_university_follow(university_acro): 
-    USERS[SESSION.current_user_id].followed_universities.add(UNIVERSITIES[university_acro]) # STORE: User followed university 
+################################################################################
 
-def store_course_follow(university_acro, course): 
-    USERS[SESSION.current_user_id].followed_courses.add(UNIVERSITIES[university_acro].courses[course]) # STORE: User followed course 
+def store_course(course_name, course_number, department, university): 
+    return query(
+        """
+            INSERT INTO courses (name, description, course_number, department, hours, university)
+            VALUES (?, ?, ?, ?, ?, ?);
+        """,
+        (course_name, "", course_number, department.id, 0, university.id)
+    )
 
-def store_course_info(course, grade, difficulty, credit_hours): 
-    course.store_info(grade, difficulty, credit_hours)
+def store_university_follow(university): 
+    user = USERS[SESSION.current_user_id]
+    return query(
+        "INSERT INTO user_universities (user, university) VALUES (?, ?);",
+        (user.id, university.id)
+    )
+
+def store_course_follow(course): 
+    user = USERS[SESSION.current_user_id]
+    return query(
+        "INSERT INTO user_courses (user, course) VALUES (?, ?);",
+        (user.id, course.id)
+    )
+
+def store_course_info(course, difficulty, grade, hours): 
+    user = USERS[SESSION.current_user_id]
+    return course.store_info(user, difficulty, grade, hours)
 
 def store_professor_info(course, professor_full_name): 
-    course.professors.add(professor_full_name)
+    user = USERS[SESSION.current_user_id]
+    return course.store_info(user, instructor = professor_full_name)
 
-
-def store_university(university_acro, university_name): 
-    university = University(len(UNIVERSITIES) + 1, university_name, university_acro)
-    UNIVERSITIES[university_acro] = university # STORE: University 
-
-def university_exists(university_acro): 
-    return university_acro in UNIVERSITIES
-
-def course_exists(university_acro, department_course_number): 
-    return department_course_number in UNIVERSITIES[university_acro].courses
-
-def store_course(id, course_number, department, course_name, university_acro) : 
-    department_course_number = f"{department}-{course_number}"
-    course_obj = Course(id, course_number, department, course_name, university_acro)
-    UNIVERSITIES[university_acro].courses[department_course_number] = course_obj # STORE: Course
+def get_uni_and_course_from_route(university_acronym, course_name_combined):
+    university = University.get_university_by_acronym(university_acronym)
     
+    if university is None: 
+        return (None, None)
 
+    return (
+        university,
+        Course.get_course_by_name_combined(university, course_name_combined)
+    )
+
+################################################################################
+
+def store_department(department_name, abbreviation, university):
+    return query(
+        """
+            INSERT INTO departments (name, abbreviation, university)
+            VALUES (?, ?, ?);
+        """,
+        (department_name, abbreviation.upper(), university.id)
+    )
+
+################################################################################
+
+def store_university(university_name, university_acronym, description = None): 
+    return query(
+        """
+            INSERT INTO universities (name, acronym, description)
+            VALUES (?, ?, ?);
+        """,
+        (university_name, university_acronym.upper(), description)
+    )
+    
+################################################################################

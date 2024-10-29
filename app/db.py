@@ -17,11 +17,11 @@ migration to a more fitting database later.
 
 DATABASE_FILE = "app/database/unihive.db"
 
-connection = sqlite3.connect(DATABASE_FILE)
+connection = sqlite3.connect(DATABASE_FILE, check_same_thread = False)
 
 ################################################################################
 
-def query(query, parameters, *, count = None):
+def query(query, parameters = tuple(), *, count = None):
     """
     Wrapper function for all database queries. Used
     to abstract away the database & add portability.
@@ -31,16 +31,19 @@ def query(query, parameters, *, count = None):
         cursor = connection.cursor()
         result = cursor.execute(query, parameters)
         connection.commit()
+
+        if count is None:
+            return result.fetchall()
+        if count == 1:
+            return result.fetchone()
+        else:
+            return result.fetchmany(count)
+
     except sqlite3.Error as e:
         print("[QUERY ERROR]", e)
         return False
     finally:
         cursor.close()
-
-    if count is None:
-        return result.fetchall()
-    else:
-        return result.fetchmany(count)
 
 ################################################################################
 
@@ -56,10 +59,9 @@ def create_tables():
             id              INTEGER PRIMARY KEY,
             created         TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
             last_login      TIMESTAMP,
-            username        VARCHAR NOT NULL,
+            username        VARCHAR UNIQUE NOT NULL,
             password        VARCHAR NOT NULL,
-            profile_picture VARCHAR,
-            university      INTEGER
+            profile_picture VARCHAR
         );
         """,
         """
@@ -90,10 +92,17 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS universities (
             id          INTEGER PRIMARY KEY,
             created     TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            name        VARCHAR NOT NULL,
-            acronym     VARCHAR,
+            name        VARCHAR UNIQUE NOT NULL,
+            acronym     VARCHAR UNIQUE,
             description VARCHAR,
             logo        VARCHAR
+        );
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS user_universities (
+            id         INTEGER PRIMARY KEY,
+            user       INTEGER NOT NULL,
+            university INTEGER NOT NULL
         );
         """,
         """

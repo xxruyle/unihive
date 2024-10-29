@@ -10,7 +10,7 @@
 {% block sidebar_content %} 
 {% endblock %}
 
-{% block content_title %}University Home - {{university_acro}}{% endblock %}
+{% block content_title %}University Home - {{university.acronym}}{% endblock %}
 {% block content_subtitle %}
 
 <form action="{{course}}" method="post">
@@ -24,8 +24,8 @@ Trending Courses
 {% block content_main %}
 
 <div class="list-group">
-    {% for course in courses %}
-    <a href="{{url_for('course', university_acro=university_acro, course=course)}}" class="list-group-item list-group-item-action">{{course}}</a>
+    {% for course in university.courses %}
+    <a href="{{url_for('course', university_acro=university.acronym, course=course.name_combined)}}" class="list-group-item list-group-item-action">{{course.name_combined}}</a>
     {% endfor %}
 </div>
 

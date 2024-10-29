@@ -7,9 +7,9 @@
 
 {% extends 'base.html' %}
 
-{% block content_title %}{{course.upper()}}{% endblock %}
+{% block content_title %}{{course.name_combined}}{% endblock %}
 {% block content_subtitle %}
-<form action="{{course}}" method="post">
+<form action="{{course.combined_name}}" method="post">
 <input type="hidden">
 <button type="submit" class="btn btn-info mt-3" name="follow-btn" value="follow">Follow</button>
 </form><br>
@@ -30,19 +30,19 @@ Posts
             <p class="card-text">How did it go for you all? Lorem ipsum blalalalala lalaalala l alalalala</p>
             <a href="#" class="btn btn-primary">See Comments (2521)</a>
             <div class="mt-2">
-                <small>Posted in <a href="{{url_for('course', university_acro=uni, course=course)}}" class="text-primary">{{uni.upper()}}/{{course.upper()}}</a></small>
+                <small>Posted in <a href="{{url_for('course', university_acro=course.university.acronym, course=course.name_combined)}}" class="text-primary">{{course.university.acronym}}/{{course.name_combined}}</a></small>
             </div>
         </div>
     </div>
 
     <h2>Info</h2>
 
-    <p>Average Grade: {{UNIVERSITIES[uni].courses[course].average_grade}}</p>
-    <p>Average Difficulty (1-5): {{UNIVERSITIES[uni].courses[course].difficulty}}</p>
-    <p>Credit Hours: {{UNIVERSITIES[uni].courses[course].credit_hours}}</p>
+    <p>Average Grade: {{course.average_grade}}</p>
+    <p>Average Difficulty (1-5): {{course.average_difficulty}}</p>
+    <p>Credit Hours: {{course.credit_hours}}</p>
 
     <h4>Submit Info<h4>
-    <form action="{{course}}" method="post">
+    <form action="{{course.combined_name}}" method="post">
     <div class="row">
       <div class="col">
         <input class="form-control w-100" type="text" placeholder="Grade" readonly>
@@ -79,14 +79,14 @@ Posts
 
     <h2 class="mt-5">Past Professors</h2> 
     <div class="card mb-3" style="width: 18rem; font-size: 14px">
-        {% for professor in UNIVERSITIES[uni].courses[course].professors %}
+        {% for professor in course.instructors %}
           <ul class="list-group list-group-flush">
               <li class="list-group-item">{{professor}}</li>
           </ul>
         {% endfor %}
     </div>
 
-    <form action="{{course}}" method="post">
+    <form action="{{course.name_combined}}" method="post">
         <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text" id="">First and Last Name</span>

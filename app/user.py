@@ -5,21 +5,48 @@
 # Authors: Xavier Ruyle
 # Creation Date: 10/24/2024
 
-USERS = {}  # USERS container (user id as key, User object instance as value)
+from db import query
+from university import University
+from course import Course
+from session import SESSION
+
 class User: 
     '''
     Class which contains information about users on the site 
     '''
     def __init__(self, id, name): 
-        self.id = id # db id
-        self.name = name # full name of the user
-        self.profile_img = None # image id (stored on db?)  
-        self.followed_universities = set() # contains university object
-        self.followed_courses = set() # contains course object 
+        self.id                    = id    # db id
+        self.name                  = name  # full name of the user
+        self.profile_img           = None  # image id (stored on db?)  
 
+    @property
+    def followed_universities(self):
+        return [University(*params) for params in query(
+            """
+                SELECT DISTINCT universities.id, name, acronym, description 
+                FROM universities INNER JOIN user_universities 
+                ON universities.id = user_universities.university 
+                WHERE user = ?;
+            """, 
+            (self.id,)
+        )]
+    
+    @property
+    def followed_courses(self):
+        return [Course(*params) for params in query(
+            """
+                SELECT DISTINCT courses.id, name, description, course_number, department, university 
+                FROM courses INNER JOIN user_courses
+                ON courses.id = user_courses.course 
+                WHERE user = ?;
+            """, 
+            (self.id,)
+        )]
 
     def _get_image_db(self): 
         '''
         Retrieves an image file from the db
         '''
         pass 
+
+USERS = {SESSION.current_user_id: User(1, "DEV")}  # USERS container (user id as key, User object instance as value)
