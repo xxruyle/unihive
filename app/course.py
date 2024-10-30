@@ -14,6 +14,7 @@ class Course:
         self.university_acro = university_acro
         self.name_combined = self.department + "-" + str(self.course_id)  # ex: EECS-581
         self.professors = set()  # set of strings 
+        self.posts = []
         self.difficulty = 1
         self.average_grade = "Unknown"
         self.credit_hours = 0

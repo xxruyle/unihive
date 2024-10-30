@@ -8,6 +8,7 @@
 from university import *
 from course import * 
 from session import * 
+from post import * 
 from user import * 
 
 def store_university_follow(university_acro): 
@@ -26,6 +27,12 @@ def store_professor_info(course, professor_full_name):
 def store_university(university_acro, university_name): 
     university = University(len(UNIVERSITIES) + 1, university_name, university_acro)
     UNIVERSITIES[university_acro] = university # STORE: University 
+
+def store_post(course_obj, title, post_body): 
+    post_obj = Post(course_obj, title, post_body)
+    course_obj.posts.append(post_obj)
+
+
 
 def university_exists(university_acro): 
     return university_acro in UNIVERSITIES

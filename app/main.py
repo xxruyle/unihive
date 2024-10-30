@@ -15,6 +15,9 @@ from db_util import *
 app = Flask(__name__) # initialize flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # flask app secret key required for form requests
 
+
+
+
 @app.route("/") 
 def home(): 
     '''
@@ -69,6 +72,16 @@ def course(university_acro=None, course=None):
     '''
     # detect if there was a post request 
     if request.method == "POST": 
+        # handle post creation 
+        post_title = request.form.get('post-title')
+        post_body = request.form.get('post-body')
+        if post_title and post_body: # data check 
+            # store the post 
+            store_post(UNIVERSITIES[university_acro].courses[course], post_title, post_body) # STORE: user post  
+            # redirect so it doesn't resend the post request 
+            return redirect(url_for('course', university_acro=university_acro, course=course))
+
+
         # handle follow request 
         follow_response = request.form.get('follow-btn') 
         if follow_response: 
@@ -79,8 +92,7 @@ def course(university_acro=None, course=None):
         difficulty = request.form.get('difficulty')
         credit_hours = request.form.get('credit-hours')
 
-        # data check
-        if grade and difficulty and credit_hours: 
+        if grade and difficulty and credit_hours: # data check 
             store_course_info(UNIVERSITIES[university_acro].courses[course], grade.upper(), int(difficulty), int(credit_hours)) # STORE: Course info
 
         # handle professor info submission

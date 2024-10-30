@@ -11,29 +11,69 @@
 {% block content_subtitle %}
 <form action="{{course}}" method="post">
 <input type="hidden">
-<button type="submit" class="btn btn-info mt-3" name="follow-btn" value="follow">Follow</button>
+<button type="submit" class="btn btn-info" name="follow-btn" value="follow">Follow</button>
 </form><br>
 Posts
 {% endblock %}
 
 {% block content_main %}
+    <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Post</button>
+    <!-- Modal Post -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+              <!-- Modal body -->
+
+          <form action="{{course}}" method="post">
+              <div class="form-group">
+                <label for="exampleFormControlInput1">Title</label>
+                <input type="text" class="form-control" id="post-title" name="post-title" for="post-title" placeholder="Title" required>
+              </div>
+              <div class="form-group">
+                <label for="exampleFormControlTextarea1">Post Body</label>
+                <textarea class="form-control" id="post-body" name="post-body" for="post-body" rows="3" required></textarea>
+              </div>
+          </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+        </form>
+
+        </div>
+      </div>
+    </div>
+
+
+        <!-- Posts -->
+        {% for post in UNIVERSITIES[uni].courses[course].posts %}
       <div class="card mb-4">
         <div class="card-body">
             <div class="d-flex align-items-center mb-3">
                 <img src="https://via.placeholder.com/40" class="rounded-circle mr-2" alt="User">
                 <div class="px-3">
-                    <h6 class="mb-1">johnanon</h6>
-                    <small class="text-muted">Posted on Oct 17, 2024</small>
+                    <h6 class="mb-1">{{post.user}}</h6>
+                    <small class="text-muted">Posted on {{post.date_posted}}</small>
                 </div>
             </div>
-            <h5 class="card-title">Midterm 1</h5>
-            <p class="card-text">How did it go for you all? Lorem ipsum blalalalala lalaalala l alalalala</p>
-            <a href="#" class="btn btn-primary">See Comments (2521)</a>
+            <h5 class="card-title">{{post.title}}</h5>
+            <p class="card-text">{{post.body}}</p>
+            <a href="#" class="btn btn-primary">Replies ({{post.replies | length}})</a>
             <div class="mt-2">
                 <small>Posted in <a href="{{url_for('course', university_acro=uni, course=course)}}" class="text-primary">{{uni.upper()}}/{{course.upper()}}</a></small>
             </div>
         </div>
     </div>
+
+        {% endfor %}
+
+
 
     <h2>Info</h2>
 

@@ -1,9 +1,11 @@
-posts = []
+import datetime 
 
 class Post: 
-    def __init__(self,university_id, course_id, user): 
-        self.course_id = course_id # what course 
-        self.user = user  
+    def __init__(self, user, title, body): 
+        self.user = "test-user" 
+        self.title  = title 
+        self.body  = body 
+        self.date_posted = datetime.date.today()
         self.replies = [] 
 
 
