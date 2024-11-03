@@ -87,6 +87,16 @@ def course(university_acro=None, course=None):
 
     # detect if there was a post request 
     if request.method == "POST": 
+        # handle post creation 
+        post_title = request.form.get('post-title')
+        post_body = request.form.get('post-body')
+        if post_title and post_body: # data check 
+            # store the post 
+            store_post(UNIVERSITIES[university_acro].courses[course], post_title, post_body) # STORE: user post  
+            # redirect so it doesn't resend the post request 
+            return redirect(url_for('course', university_acro=university_acro, course=course))
+
+
         # handle follow request 
         follow_response = request.form.get('follow-btn') 
         if follow_response: 
