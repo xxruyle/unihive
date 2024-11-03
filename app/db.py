@@ -17,32 +17,41 @@ migration to a more fitting database later.
 
 DATABASE_FILE = "app/database/unihive.db"
 
+# Create a connection to the database housed inside the database file.
 connection = sqlite3.connect(DATABASE_FILE, check_same_thread = False)
 
 ################################################################################
 
-def query(query, parameters = tuple(), *, count = None):
+def query(query: str, parameters: tuple = tuple(), *, count: int = None):
     """
     Wrapper function for all database queries. Used
     to abstract away the database & add portability.
+
+    :param query: SQL query to execute safely.
+    :param parameters: Injection proof params.
+    :param count: Number of rows to fetch for.
     """
 
     try:
-        cursor = connection.cursor()
-        result = cursor.execute(query, parameters)
-        connection.commit()
+        cursor = connection.cursor()               # Create a database cursor
+        result = cursor.execute(query, parameters) # Execute the query safely
+        connection.commit()                        # Commit the changes to DB
 
-        if count is None:
-            return result.fetchall()
-        if count == 1:
-            return result.fetchone()
-        else:
-            return result.fetchmany(count)
+        if count is None:                  # If the count was not set
+            return result.fetchall()       # Fetch every row in query
+        if count == 1:                     # If the count was set one
+            return result.fetchone()       # Fetch a single query row
+        else:                              # If count was other value
+            return result.fetchmany(count) # Fetch desired row amount
 
     except sqlite3.Error as e:
+        # If the query encounters an error,
+        # print the error and return false.
         print("[QUERY ERROR]", e)
         return False
+
     finally:
+        # Always close the database cursor.
         cursor.close()
 
 ################################################################################
@@ -173,18 +182,29 @@ def create_tables():
     ]
 
     try:
+        # Create database cursor
         cursor = connection.cursor()
-        for table in tables:
-            cursor.execute(table)
+
+        for table in tables:      # For every table listed above,
+            cursor.execute(table) # Create the table for the DB.
+
+        # Commit query to database.
         connection.commit()
+
     except sqlite3.Error as e:
+        # If the query encounters an error,
+        # print the error and return false.
         print("[TABLE ERROR]", e)
         return False
+
     finally:
+         # Always close the database cursor.
         cursor.close()
-    
+
+    # Return True on success
     return True
 
 ################################################################################
 
+# Initialize the tables on load
 create_tables()

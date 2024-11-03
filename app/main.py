@@ -18,6 +18,7 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # flask app secret key required for for
 
 @app.context_processor
 def inject_default():
+    """Inject default information into HTML templates."""
     return dict(
         USERS   = USERS, 
         SESSION = SESSION
@@ -98,7 +99,7 @@ def course(university_acro=None, course=None):
 
         # data check
         if grade and difficulty and credit_hours: 
-            # @TODO: Add type checking here. This could error out.
+            # Store course grade, difficulty, and hours info
             store_course_info(
                 stored_course, 
                 int(difficulty), 
@@ -130,25 +131,31 @@ def create_course(university="placeholder"):
         department      = request.form.get('department').lower()
         course_number   = request.form.get('course-number').lower()
 
+        # Get the university using the supplied acronym
         stored_university = University.get_university_by_acronym(university_acro)
 
+        # If the university doesn't exist, error out
         if stored_university is None:
             flash("University does not exist")
             return render_template('create_course.html', uni=university)
 
+        # Get the requested department from the DB
         stored_department = Department.get_department_by_abbreviation(stored_university, department)
-        stored_course     = Course.get_course_by_course_number(stored_university, course_number)
 
         # Just in case the department doesn't already exist
         if stored_department is None:
+            # Create a new department and use it
             store_department(department, department, stored_university)
             stored_department = Department.get_department_by_abbreviation(stored_university, department)
+
+        # Get the requested course from the DB
+        stored_course = Course.get_course_by_course_number(stored_university, stored_department, course_number)
 
         # check if course exists
         if stored_course is None: 
             # TODO: course name should be a form option 
-            store_course("", course_number, stored_department, stored_university) # STORE: Course obj
-            stored_course = Course.get_course_by_course_number(stored_university, course_number)
+            store_course("", course_number, stored_department) # STORE: Course obj
+            stored_course = Course.get_course_by_course_number(stored_university, stored_department, course_number)
 
             return redirect(url_for('course', university_acro=university_acro, course=stored_course.name_combined)) # redirect user to the course page 
         else: 
