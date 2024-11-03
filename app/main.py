@@ -92,9 +92,9 @@ def course(university_acro=None, course=None):
         post_body = request.form.get('post-body')
         if post_title and post_body: # data check 
             # store the post 
-            store_post(UNIVERSITIES[university_acro].courses[course], post_title, post_body) # STORE: user post  
+            store_post(stored_course, post_title, post_body) # STORE: user post  
             # redirect so it doesn't resend the post request 
-            return redirect(url_for('course', university_acro=university_acro, course=course))
+            return redirect(url_for('course', university_acro=stored_university.acronym, course=stored_course.name_combined))
 
 
         # handle follow request 
@@ -167,7 +167,7 @@ def create_course(university="placeholder"):
             store_course("", course_number, stored_department) # STORE: Course obj
             stored_course = Course.get_course_by_course_number(stored_university, stored_department, course_number)
 
-            return redirect(url_for('course', university_acro=university_acro, course=stored_course.name_combined)) # redirect user to the course page 
+            return redirect(url_for('course', university_acro=stored_university.acronym, course=stored_course.name_combined)) # redirect user to the course page 
         else: 
             flash("Course already exists", 'error') # Inform user that course exists
 

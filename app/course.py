@@ -25,6 +25,26 @@ class Course:
         self.name_combined = self.department.name + "-" + str(self.course_number)
 
     @property
+    def posts(self):
+        """
+        Posts belong to course getter.
+        Returns list of posts in course.
+        """
+
+        # Avoid circular import.
+        from post import Post
+
+        # Return a list of all posts that aren't replies.
+        return [Post(*params) for params in query(
+            """
+                SELECT id, created, title, content, author, course FROM posts
+                WHERE course = ? AND parent IS NULL
+                ORDER BY created DESC;
+            """,
+            (self.id,)
+        )]
+
+    @property
     def average_difficulty(self):
         """Average difficulty of course getter."""
 

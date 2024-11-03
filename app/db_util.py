@@ -8,6 +8,7 @@
 from university import *
 from department import *
 from course import *
+from post import *
 from session import *
 from user import *
 from db import query
@@ -145,6 +146,29 @@ def store_university(university_name: str, university_acronym: str, description:
             VALUES (?, ?, ?);
         """,
         (university_name, university_acronym.upper(), description)
+    )
+
+################################################################################
+
+def store_post(course: Course, title: str, post_body: str):
+    """
+    Create a new post in the database for a given
+    course complete with title and post contents.
+
+    :param course: The course that the post belongs to.
+    :param title: The title (identifier) of the new post.
+    :param post_body: The contents of the new post.
+    """
+
+    user = USERS[SESSION.current_user_id] # @TODO: Replace this
+
+    # Insert a new post into the database.
+    return query(
+        """
+        INSERT INTO posts (title, content, author, course)
+        VALUES (?, ?, ?, ?);
+        """,
+        (title, post_body, user.id, course.id)
     )
 
 ################################################################################
