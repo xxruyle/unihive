@@ -36,3 +36,6 @@ $ python3 app/main.py
 - Bootstrap 
 
 
+## Tips
+When working with the database, feel free to wipe `unihive.db` to clear out
+existing state. This is needed after changes to table schema, etc.

@@ -7,9 +7,9 @@
 
 {% extends 'base.html' %}
 
-{% block content_title %}{{course.upper()}}{% endblock %}
+{% block content_title %}{{course.name_combined}}{% endblock %}
 {% block content_subtitle %}
-<form action="{{course}}" method="post">
+<form action="{{course.combined_name}}" method="post">
 <input type="hidden">
 <button type="submit" class="btn btn-info" name="follow-btn" value="follow">Follow</button>
 </form><br>
@@ -30,7 +30,7 @@ Posts
           <div class="modal-body">
               <!-- Modal body -->
 
-          <form action="{{course}}" method="post">
+          <form action="{{course.combined_name}}" method="post">
               <div class="form-group">
                 <label for="exampleFormControlInput1">Title</label>
                 <input type="text" class="form-control" id="post-title" name="post-title" for="post-title" placeholder="Title" required>
@@ -52,21 +52,21 @@ Posts
 
 
         <!-- Posts -->
-        {% for post in UNIVERSITIES[uni].courses[course].posts %}
+        {% for post in course.posts %}
       <div class="card mb-4">
         <div class="card-body">
             <div class="d-flex align-items-center mb-3">
                 <img src="https://via.placeholder.com/40" class="rounded-circle mr-2" alt="User">
                 <div class="px-3">
-                    <h6 class="mb-1">{{post.user}}</h6>
+                    <h6 class="mb-1">{{post.author}}</h6>
                     <small class="text-muted">Posted on {{post.date_posted}}</small>
                 </div>
             </div>
             <h5 class="card-title">{{post.title}}</h5>
-            <p class="card-text">{{post.body}}</p>
+            <p class="card-text">{{post.content}}</p>
             <a href="#" class="btn btn-primary">Replies ({{post.replies | length}})</a>
             <div class="mt-2">
-                <small>Posted in <a href="{{url_for('course', university_acro=uni, course=course)}}" class="text-primary">{{uni.upper()}}/{{course.upper()}}</a></small>
+                <small>Posted in <a href="{{url_for('course', university_acro=course.university.acronym, course=course.name_combined)}}" class="text-primary">{{course.university.acronym}}/{{course.name_combined}}</a></small>
             </div>
         </div>
     </div>
@@ -77,12 +77,12 @@ Posts
 
     <h2>Info</h2>
 
-    <p>Average Grade: {{UNIVERSITIES[uni].courses[course].average_grade}}</p>
-    <p>Average Difficulty (1-5): {{UNIVERSITIES[uni].courses[course].difficulty}}</p>
-    <p>Credit Hours: {{UNIVERSITIES[uni].courses[course].credit_hours}}</p>
+    <p>Average Grade: {{course.average_grade}}</p>
+    <p>Average Difficulty (1-5): {{course.average_difficulty}}</p>
+    <p>Credit Hours: {{course.credit_hours}}</p>
 
     <h4>Submit Info<h4>
-    <form action="{{course}}" method="post">
+    <form action="{{course.combined_name}}" method="post">
     <div class="row">
       <div class="col">
         <input class="form-control w-100" type="text" placeholder="Grade" readonly>
@@ -119,14 +119,14 @@ Posts
 
     <h2 class="mt-5">Past Professors</h2> 
     <div class="card mb-3" style="width: 18rem; font-size: 14px">
-        {% for professor in UNIVERSITIES[uni].courses[course].professors %}
+        {% for professor in course.instructors %}
           <ul class="list-group list-group-flush">
               <li class="list-group-item">{{professor}}</li>
           </ul>
         {% endfor %}
     </div>
 
-    <form action="{{course}}" method="post">
+    <form action="{{course.name_combined}}" method="post">
         <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text" id="">First and Last Name</span>
