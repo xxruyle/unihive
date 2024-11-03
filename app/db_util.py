@@ -5,13 +5,13 @@
 # Authors: Xavier Ruyle, Andrew Ward
 # Creation Date: 10/25/2024
 
-from university import *
-from department import *
 from course import *
+from db import query
+from department import *
 from post import *
 from session import *
+from university import *
 from user import *
-from db import query
 
 ################################################################################
 
@@ -109,6 +109,24 @@ def get_uni_and_course_from_route(university_acronym: str, course_name_combined:
     )
 
 ################################################################################
+
+def store_syllabus(course_name_combined: str, file_name: str, file: bytes): 
+    """
+    Upload syllabus to the database using, the course_name_combined, file_name,
+    and file (in bytes) 
+
+    :param coursename: Course name combined (ex: EECS-388)
+    :param file_name: File name (ex: eecs388-syllabus)
+    :param file: Actual file data in bytes 
+    """
+    # TODO: store syllabus course 
+    return query(
+        """
+        INSERT INTO syllabus (coursename, filename, file)
+        VALUES (?, ?, ?);
+        """,
+        (course_name_combined, file_name, file)
+    )
 
 def store_department(department_name: str, abbreviation: str, university: University):
     """

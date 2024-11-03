@@ -6,9 +6,11 @@
 # Creation Date: 10/24/2024
 
 from enum import IntEnum
+
+from course import *
 from db import query
-from university import University
 from department import Department
+from university import University
 
 COURSE_PARAMS = "courses.id, courses.name, description, course_number, department, courses.university"
 

@@ -178,7 +178,16 @@ def create_tables():
             is_reply    BOOL DEFAULT FALSE,
             parent      INTEGER DEFAULT NULL
         );
+        """,
         """
+        CREATE TABLE IF NOT EXISTS syllabus (
+            id          INTEGER PRIMARY KEY,
+            coursename  VARCHAR NOT NULL,
+            filename    VARCHAR NOT NULL,
+            file        BLOB NOT NULL 
+        );
+        """
+
     ]
 
     try:
