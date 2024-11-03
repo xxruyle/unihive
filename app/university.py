@@ -7,6 +7,7 @@
 
 from db import query
 
+
 class University:
     """
     Class which contains information about a university

@@ -51,7 +51,7 @@
 
     <h5 class="text-center text-white mt-4">Followed Courses</h2>
     {% for followed_course in USERS[SESSION.current_user_id].followed_courses %}
-    <a href="{{url_for('course', university_acro=followed_course.university.acronym, course=followed_course.name_combined)}}">{{followed_course.university_acro}}/{{followed_course.name_combined}}</a>
+    <a href="{{url_for('course', university_acro=followed_course.university.acronym, course=followed_course.name_combined)}}">{{followed_course.university.acronym}}/{{followed_course.name_combined}}</a>
     {% endfor %}
 
     <h4 class="text-center text-white">Resources</h2>
