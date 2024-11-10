@@ -5,13 +5,13 @@
 # Authors: Xavier Ruyle
 # Creation Date: 10/24/2024
 
-from flask import Flask, render_template, request, redirect, url_for, flash
-from university import *
-from course import * 
-from session import * 
-from user import * 
-from db_util import * 
 import db
+from course import *
+from db_util import *
+from flask import Flask, flash, redirect, render_template, request, url_for
+from session import *
+from university import *
+from user import *
 
 app = Flask(__name__) # initialize flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # flask app secret key required for form requests
@@ -98,6 +98,7 @@ def course(university_acro=None, course=None):
             return redirect(url_for('course', university_acro=stored_university.acronym, course=stored_course.name_combined))
 
 
+
         # handle follow request 
         follow_response = request.form.get('follow-btn') 
         if follow_response: 
@@ -125,6 +126,20 @@ def course(university_acro=None, course=None):
         # correct data check
         if professor_first_name and professor_last_name: 
             store_professor_info(stored_course, f"{professor_first_name} {professor_last_name}") # STORE: Professor info
+
+
+        # handle syllabus submission
+        if 'syllabusFile' in request.files: # make sure the submission exists
+            file = request.files['syllabusFile'] # get the file data
+            # TODO: Make sure the file is a supported file type (pdf, docx)
+            if file == '': # the file was not found
+                flash("File not found") 
+            else: 
+                # store the syllabus file into database
+                store_syllabus(stored_course.name_combined, file.filename, file.read()) 
+                # DEBUG (to make sure it was inserted into the db): 
+                # print(query("SELECT coursename FROM syllabus;"))
+                return redirect(url_for('course', university_acro=stored_university.acronym, course=stored_course.name_combined))
 
     return render_template('course.html', course = stored_course)  # render course html 
 
