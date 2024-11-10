@@ -21,7 +21,8 @@ def inject_default():
     """Inject default information into HTML templates."""
     return dict(
         USERS   = USERS, 
-        SESSION = SESSION
+        SESSION = SESSION,
+        active  = None
     )
 
 @app.route("/") 
@@ -172,6 +173,15 @@ def create_course(university="placeholder"):
             flash("Course already exists", 'error') # Inform user that course exists
 
     return render_template('create_course.html', uni=university)  # render create course page 
+
+@app.route("/user/<username>", methods=["GET", "POST"])
+def profile_page(username):
+    user = User.get_user_by_username(username) 
+
+    if user is None:
+        return render_template("404.html"), 404
+    
+    return render_template("user_profile.html", user = user, active = "profile-page")
 
 def main(): 
     '''

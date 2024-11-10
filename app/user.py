@@ -9,15 +9,17 @@ from db import query
 from university import University
 from course import Course
 from session import SESSION
+from datetime import datetime
 
 class User:
     """
     Class which contains information about users on the site
     """
-    def __init__(self, id, name):
-        self.id          = id   # db id
-        self.name        = name # full name of the user
-        self.profile_img = None # image id (stored on db?)
+    def __init__(self, id, username):
+        self.id          = id       # db id
+        self.username    = username # full name of the user
+        self.profile_img = None     # image id (stored on db?)
+        self.created     = datetime.now()
 
     @property
     def followed_universities(self):
@@ -54,6 +56,32 @@ class User:
             """,
             (self.id,)
         )]
+    
+    @staticmethod
+    def get_user_by_username(username: str):
+        """
+        Get a User by their username.
+        :param username: The username.
+        """
+
+        # @TEMPORARY: This is just a stopgap to
+        # allow the session based code to work
+        # for development purposes only.
+        for user in list(USERS.values()):
+            if user.username == username:
+                return user
+
+        # Query the database for user data.
+        params = query(
+            f"""
+                SELECT id, username FROM users
+                WHERE username = ?;
+            """,
+            (username,),
+            count = 1
+        )
+        if not params: return None # Course not found
+        return User(*params)       # Construct course object
 
     def _get_image_db(self):
         """

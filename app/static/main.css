@@ -70,3 +70,71 @@
 .card-title {
     font-weight: bold;
 }
+
+/* Miscellaneous Profile Page Styles */
+.horizontal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2em;
+}
+
+.horizontal > div {
+  flex: 1;
+}
+
+.horizontal.right-skew > div:first-child {
+  flex: 0.75;
+  min-width: 7.5em;
+  max-width: 15em;
+}
+
+#profile-picture {
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.sub-header {
+  margin: 1.5em 0 0.25em 0;
+  font-size: 1.25em;
+}
+
+.side-note {
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.75);
+  margin: 0;
+}
+
+.profile-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 2em;
+  margin-top: 1.5em;
+}
+
+.profile-card:first-child {
+  margin-top: 0;
+}
+
+.follow-wrapper {
+  display: block;
+  padding-top: 5px;
+  text-decoration: none !important;
+}
+
+.follow-wrapper:first-child {
+  padding-top: 0;
+}
+
+.follow-cell {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 5px 5px 5px 0.5em;
+}
+
+.column-header {
+  font-size: 1.1em;
+  color: rgba(0, 0, 0, 0.75);
+  font-style: italic;
+  margin: 0;
+}

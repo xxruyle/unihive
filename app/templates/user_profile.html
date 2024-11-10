@@ -5,14 +5,60 @@
 <!-- Authors: Xavier Ruyle -->
 <!-- Creation Date: 10/24/2024 -->
 
-{% extends base.html %}
+{% extends 'base.html' %}
 
 {% block sidebar_content %} 
 {% endblock %}
 
-{% block content_title %}Profile{% endblock %}
-
 {% block content_main %}
+<div>
+    <div class="horizontal right-skew profile-card" style="margin-top: -2.5em">
+        <div>
+            <img id="profile-picture" class="rounded-circle" src="https://via.placeholder.com/80">
+        </div>
+        <div>
+            <div>
+                <h1><b>{{user.username}}</b></h1>
+                <p>Joined: <span>{{user.created.date()}}</span></p>
+            </div>
+            <div>
+                <h3 class="sub-header">Biography:</h3>
+                {% if user.description %}
+                <p>{{user.description}}</p>
+                {% else %}
+                <p class="side-note">No Description Provided...</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="profile-card">
+        <h4>Follows</h4>
+        <div class="horizontal">
+            <div>
+                <h5 class="column-header">Universities:</h5>
+                {% for followed_university in user.followed_universities %}
+                <a class="follow-wrapper" href="{{url_for('university', university_acro=followed_university.acronym)}}">
+                    <div class="follow-cell">{{followed_university.name}}</div>
+                </a>
+                {% endfor %}
+            </div>
+            <div>
+                <h5 class="column-header">Courses:</h5>
+                {% for followed_course in user.followed_courses %}
+                <a class="follow-wrapper" href="{{url_for('course', university_acro=followed_course.university.acronym, course=followed_course.name_combined)}}">
+                    <div class="follow-cell">{{followed_course.university_acro}}/{{followed_course.name_combined}}</div>
+                </a>
+                {% endfor %}            
+            </div>
+        </div>
+    </div>
+    <div class="profile-card">
+        <h4>Activity</h4>
+        <div>
+            <p class="side-note">This user has no activity...</p>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 
