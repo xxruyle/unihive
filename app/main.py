@@ -120,33 +120,22 @@ def logout():
     flash("You have been logged out")
     return redirect(url_for('login'))
 
-@app.route("/register", methods=["GET", "POST"])
+@app.route("/register", methods=['GET', 'POST'])
 def register():
-    # If user is already logged in, redirect to home
-    if SESSION.current_user_id is not None:
-        return redirect(url_for('home'))
-        
-    if request.method == "POST":
+    if request.method == 'POST':
+        # Get form data
         username = request.form.get('username')
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
         
         # Basic validation
         if not username or not password or not confirm_password:
-            flash("Please fill in all fields")
-            return redirect(url_for('register'))
-            
-        if len(username) < 3 or len(username) > 20:
-            flash("Username must be between 3 and 20 characters")
-            return redirect(url_for('register'))
-            
-        if len(password) < 6:
-            flash("Password must be at least 6 characters long")
-            return redirect(url_for('register'))
+            flash('All fields are required.', 'error')
+            return render_template('auth/register.html')
             
         if password != confirm_password:
-            flash("Passwords do not match")
-            return redirect(url_for('register'))
+            flash('Passwords do not match.', 'error')
+            return render_template('auth/register.html')
             
         # Check if username already exists
         existing_user = query(
@@ -156,32 +145,44 @@ def register():
         )
         
         if existing_user:
-            flash("Username already exists")
-            return redirect(url_for('register'))
+            flash('Username already exists.', 'error')
+            return render_template('auth/register.html')
             
         # Create new user
-        hashed_password = generate_password_hash(password)
-        user_id = query(
-            """
-            INSERT INTO users (username, password, created) 
-            VALUES (?, ?, CURRENT_TIMESTAMP)
-            RETURNING id;
-            """,
-            (username, hashed_password),
-            count=1
-        )
-        
-        if user_id:
-            # Auto-login after registration
-            SESSION.current_user_id = user_id[0]
-            USERS[user_id[0]] = User(user_id[0], username)
+        try:
+            # Hash the password before storing
+            hashed_password = generate_password_hash(password)
             
-            flash("Account created successfully!")
-            return redirect(url_for('home'))
-        else:
-            flash("Error creating account. Please try again.")
-            return redirect(url_for('register'))
+            # Insert new user into database
+            query(
+                """
+                INSERT INTO users (username, password)
+                VALUES (?, ?);
+                """,
+                (username, hashed_password)
+            )
             
+            # Get the newly created user
+            new_user = query(
+                "SELECT id, username FROM users WHERE username = ?",
+                (username,),
+                count=1
+            )
+            
+            if new_user:
+                # Update the session with the new user
+                SESSION.current_user_id = new_user[0]
+                USERS[new_user[0]] = User(new_user[0], username)
+                
+                flash('Registration successful! Welcome to UniHive!', 'success')
+                return redirect(url_for('home'))
+            
+        except Exception as e:
+            print(f"Registration error: {e}")
+            flash('An error occurred during registration.', 'error')
+            return render_template('auth/register.html')
+    
+    # If GET request, just show the registration form
     return render_template('auth/register.html')
 
 

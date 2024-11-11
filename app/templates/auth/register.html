@@ -1,51 +1,42 @@
+<!-- Filename: register.html -->
+<!-- Description: This renders the form to login and create a profile-->
+<!-- Inputs: -->
+<!-- Output:  -->
+<!-- Authors: ElliaMorse -->
+<!-- Creation Date: 11/10/2024 -->
+
 {% extends 'base.html' %}
 
 {% block content_title %}Register{% endblock %}
-{% block content_subtitle %}Create Your Account{% endblock %}
+{% block content_subtitle %}Create Account{% endblock %}
 
 {% block content_main %}
-<div class="container">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    {% with messages = get_flashed_messages() %}
-                        {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert alert-danger" role="alert">
-                                    {{ message }}
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
-                    
+                    <h2 class="card-title text-center mb-4">Register</h2>
                     <form method="POST" action="{{ url_for('register') }}">
-                        <div class="form-group mb-3">
-                            <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" 
-                                   required minlength="3" maxlength="20">
-                            <small class="form-text text-muted">Username must be between 3 and 20 characters</small>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
                         </div>
-                        
-                        <div class="form-group mb-3">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" 
-                                   required minlength="6">
-                            <small class="form-text text-muted">Password must be at least 6 characters long</small>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
                         </div>
-                        
-                        <div class="form-group mb-3">
-                            <label for="confirm_password">Confirm Password</label>
-                            <input type="password" class="form-control" id="confirm_password" 
-                                   name="confirm_password" required>
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
                         </div>
-                        
-                        <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </div>
                     </form>
-                    
-                    <div class="text-center mt-3">
-                        <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
-                    </div>
+                    <p class="text-center mt-3">
+                        Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+                    </p>
                 </div>
             </div>
         </div>
