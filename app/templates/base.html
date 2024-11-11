@@ -15,48 +15,91 @@
   <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}" >
 </head>
 <body>
-
-<!-- Update the navigation section in base.html -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-  <div class="container-fluid">
-      <!-- Existing brand/logo -->
-      <a class="navbar-brand" href="/">UniHive</a>
-      <!-- Responsive toggle button -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
-          <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <!-- Navigation items -->
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-          <!-- Left-aligned items -->
-          <ul class="navbar-nav me-auto">
-              <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('home') }}">Home</a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" href="#">Universities</a>
-              </li>
-              {% if SESSION.current_user_id %}
-                  <li class="nav-item">
-                      <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
-                  </li>
-              {% endif %}
-          </ul>
-
-          <!-- Right-aligned authentication link -->
-          <ul class="navbar-nav">
-              <li class="nav-item">
-                  {% if SESSION.current_user_id %}
-                      <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                  {% else %}
-                      <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-                  {% endif %}
-              </li>
-          </ul>
-      </div>
-  </div>
-</nav>
-
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <!-- Left side -->
+            <div class="d-flex align-items-center">
+                <a class="navbar-brand" href="/">UniHive</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <!-- Navigation items -->
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Universities</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+    
+            <!-- Right side - Profile/Login -->
+            <div class="d-flex align-items-center">
+                {% if SESSION.current_user_id %}
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" 
+                           href="#" 
+                           role="button" 
+                           data-bs-toggle="dropdown" 
+                           aria-expanded="false">
+                            <span class="text-light">{{ USERS[SESSION.current_user_id].name }}</span>
+                            <img src="{{ url_for('static', filename='profile pic.jpg') }}"
+                                 class="rounded-circle"
+                                 style="width: 40px; height: 40px; object-fit: cover;"
+                                 alt="Profile">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                    <a class="nav-link d-flex align-items-center gap-2" href="{{ url_for('login') }}">
+                        <span>Login</span>
+                        <img src="{{ url_for('static', filename='profile pic.jpg') }}"
+                             class="rounded-circle"
+                             style="width: 40px; height: 40px; object-fit: cover;"
+                             alt="Default Profile">
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <style>
+    .navbar {
+        padding: 0.5rem 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .navbar .container-fluid {
+        padding: 0;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 1rem !important;
+    }
+    
+    .dropdown-menu {
+        margin-top: 0.5rem;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .dropdown-item {
+        padding: 0.5rem 1.5rem;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+    </style>
   <!-- Sidebar -->
   <div class="sidebar">
     <h5 class="text-center text-white">Followed Universities</h2>
