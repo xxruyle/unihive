@@ -5,15 +5,25 @@
 # Authors: Xavier Ruyle
 # Creation Date: 10/24/2024
 
-class Session: 
+class Session:
     '''
     Class which identifies current user from the database
     Informs the website what user is viewing the pages
     '''
-    def __init__(self, current_user_id):
-        self.current_user_id = current_user_id
+    def __init__(self):
+        self.current_user_id = None  # Start with no user logged in
+        
+    def login(self, user_id):
+        self.current_user_id = user_id
+        
+    def logout(self):
+        self.current_user_id = None
+        
+    @property
+    def is_authenticated(self):
+        return self.current_user_id is not None
 
-SESSION = Session(1) 
-
+# Initialize session with no user logged in
+SESSION = Session()
 
 

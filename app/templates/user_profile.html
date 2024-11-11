@@ -7,58 +7,125 @@
 
 {% extends 'base.html' %}
 
-{% block sidebar_content %} 
-{% endblock %}
+{% block content_title %}Profile{% endblock %}
+{% block content_subtitle %}Manage Your Profile{% endblock %}
 
 {% block content_main %}
-<div>
-    <div class="horizontal right-skew profile-card" style="margin-top: -2.5em">
-        <div>
-            <img id="profile-picture" class="rounded-circle" src="https://via.placeholder.com/80">
-        </div>
-        <div>
-            <div>
-                <h1><b>{{user.username}}</b></h1>
-                <p>Joined: <span>{{user.created.date()}}</span></p>
-            </div>
-            <div>
-                <h3 class="sub-header">Biography:</h3>
-                {% if user.description %}
-                <p>{{user.description}}</p>
-                {% else %}
-                <p class="side-note">No Description Provided...</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    <div class="profile-card">
-        <h4>Follows</h4>
-        <div class="horizontal">
-            <div>
-                <h5 class="column-header">Universities:</h5>
-                {% for followed_university in user.followed_universities %}
-                <a class="follow-wrapper" href="{{url_for('university', university_acro=followed_university.acronym)}}">
-                    <div class="follow-cell">{{followed_university.name}}</div>
-                </a>
-                {% endfor %}
-            </div>
-            <div>
-                <h5 class="column-header">Courses:</h5>
-                {% for followed_course in user.followed_courses %}
-                <a class="follow-wrapper" href="{{url_for('course', university_acro=followed_course.university.acronym, course=followed_course.name_combined)}}">
-                    <div class="follow-cell">{{followed_course.university_acro}}/{{followed_course.name_combined}}</div>
-                </a>
-                {% endfor %}            
+<div class="container mt-5 pb-5">
+    <div class="row">
+        <!-- Profile Picture Section -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <div class="profile-picture-container mb-4">
+                        {% if USERS[SESSION.current_user_id].profile_img %}
+                            <img src="{{ USERS[SESSION.current_user_id].profile_img }}"
+                                 class="rounded-circle profile-picture"
+                                 alt="Profile Picture">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='profile pic.jpg') }}"
+                                 class="rounded-circle profile-picture"
+                                 alt="Default Profile Picture">
+                        {% endif %}
+                    </div>
+                    <h4 class="card-title">{{ USERS[SESSION.current_user_id].name }}</h4>
+                    
+                    <form method="POST" enctype="multipart/form-data" class="mt-4">
+                        <div class="mb-3">
+                            <label for="profile_picture" class="form-label">Update Profile Picture</label>
+                            <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Upload Picture</button>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="profile-card">
-        <h4>Activity</h4>
-        <div>
-            <p class="side-note">This user has no activity...</p>
+
+        <!-- Profile Information Section -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Profile Information</h5>
+                    <form method="POST" class="needs-validation" novalidate>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" name="lastName" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="bio" class="form-label">Bio</label>
+                                <textarea class="form-control" id="bio" name="bio" rows="3"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="major" class="form-label">Major</label>
+                                <input type="text" class="form-control" id="major" name="major">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="graduationYear" class="form-label">Graduation Year</label>
+                                <input type="number" class="form-control" id="graduationYear" name="graduationYear">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Activity Summary Card -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Activity Summary</h5>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>Following</h6>
+                            <p class="mb-0">{{ USERS[SESSION.current_user_id].followed_universities|length }} Universities</p>
+                            <p>{{ USERS[SESSION.current_user_id].followed_courses|length }} Courses</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+.profile-picture-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.form-control {
+    border-radius: 8px;
+}
+
+.btn-primary {
+    border-radius: 8px;
+    padding: 0.5rem 1.5rem;
+}
+</style>
 {% endblock %}
-
-

@@ -8,13 +8,47 @@
 import db
 from course import *
 from db_util import *
-from flask import Flask, flash, redirect, render_template, request, url_for
+from flask import Flask, flash, redirect, render_template, request, url_for, session
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 from session import *
 from university import *
 from user import *
+import signal
+import sys
+from db import connection  # your existing database connection
 
 app = Flask(__name__) # initialize flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # flask app secret key required for form requests
+
+
+print("*" * 50)
+print("Starting UPDATED Flask app - Version 3")
+print(f"Python executable: {sys.executable}")
+print("*" * 50)
+
+
+def signal_handler(sig, frame):
+    """Handle shutdown signals gracefully"""
+    print('\nShutting down gracefully...')
+    
+    # Close database connection
+    if connection:
+        print('Closing database connection...')
+        connection.close()
+    
+    # Clear session data
+    if SESSION:
+        print('Clearing session data...')
+        SESSION.current_user_id = None
+        USERS.clear()
+    
+    print('Shutdown complete')
+    sys.exit(0)
+
+# Register the signal handler
+signal.signal(signal.SIGINT, signal_handler)    # Handles Ctrl+C
+signal.signal(signal.SIGTERM, signal_handler)   # Handles termination request
 
 @app.context_processor
 def inject_default():
@@ -32,6 +66,135 @@ def home():
     Base html Template Dependecies: followed universities, followed courses
     '''
     return render_template('home.html')
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if SESSION.current_user_id is None:
+            flash("Please login to access this page")
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    # If user is already logged in, redirect to home
+    if SESSION.current_user_id is not None:
+        return redirect(url_for('home'))
+        
+    if request.method == "POST":
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        if not username or not password:
+            flash("Please fill in all fields")
+            return redirect(url_for('login'))
+            
+        # Query the database for the user
+        user_data = query(
+            "SELECT id, password FROM users WHERE username = ?",
+            (username,),
+            count=1
+        )
+        
+        if user_data and check_password_hash(user_data[1], password):
+            # Set the session user ID
+            SESSION.current_user_id = user_data[0]
+            
+            # Update last login timestamp
+            query(
+                "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?",
+                (user_data[0],)
+            )
+            
+            return redirect(url_for('home'))
+        else:
+            flash("Invalid username or password")
+            return redirect(url_for('login'))
+            
+    return render_template('auth/login.html')
+
+@app.route("/logout")
+def logout():
+    SESSION.current_user_id = None
+    flash("You have been logged out")
+    return redirect(url_for('login'))
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        # Get form data
+        username = request.form.get('username')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        
+        # Basic validation
+        if not username or not password or not confirm_password:
+            flash('All fields are required.', 'error')
+            return render_template('auth/register.html')
+            
+        if password != confirm_password:
+            flash('Passwords do not match.', 'error')
+            return render_template('auth/register.html')
+            
+        # Check if username already exists
+        existing_user = query(
+            "SELECT id FROM users WHERE username = ?",
+            (username,),
+            count=1
+        )
+        
+        if existing_user:
+            flash('Username already exists.', 'error')
+            return render_template('auth/register.html')
+            
+        # Create new user
+        try:
+            # Hash the password before storing
+            hashed_password = generate_password_hash(password)
+            
+            # Insert new user into database
+            query(
+                """
+                INSERT INTO users (username, password)
+                VALUES (?, ?);
+                """,
+                (username, hashed_password)
+            )
+            
+            # Get the newly created user
+            new_user = query(
+                "SELECT id, username FROM users WHERE username = ?",
+                (username,),
+                count=1
+            )
+            
+            if new_user:
+                # Update the session with the new user
+                SESSION.current_user_id = new_user[0]
+                USERS[new_user[0]] = User(new_user[0], username)
+                
+                flash('Registration successful! Welcome to UniHive!', 'success')
+                return redirect(url_for('home'))
+            
+        except Exception as e:
+            print(f"Registration error: {e}")
+            flash('An error occurred during registration.', 'error')
+            return render_template('auth/register.html')
+    
+    # If GET request, just show the registration form
+    return render_template('auth/register.html')
+
+
+@app.route("/profile")
+@login_required
+def profile():
+    user = USERS.get(SESSION.current_user_id)
+    if not user:
+        SESSION.current_user_id = None
+        return redirect(url_for('login'))
+    return render_template('user_profile.html', user=user)
 
 @app.route("/u")
 @app.route("/u/<university_acro>", methods =["GET", "POST"])
@@ -211,9 +374,14 @@ def main():
     # daemon_user.followed_universities.add(UNIVERSITIES["ku"])
     # USERS[1] = daemon_user # STORE: user 
 
-    # run the flask web server 
-    app.run(debug=True)
+    try:
+        app.run(debug=True, host='localhost', port=5001)
+        print("It's running here")
+    except KeyboardInterrupt:
+        # This will trigger our signal handler
+        pass
 
 if __name__ == "__main__": 
+    print("RUNNING")
     main()
 
