@@ -13,8 +13,8 @@ import db
 from course import *
 from db import connection  # your existing database connection
 from db_util import *
-from flask import (Flask, flash, redirect, render_template, request, session,
-                   url_for)
+from flask import (Flask, flash, redirect, render_template, request,
+                   send_from_directory, session, url_for)
 from session import *
 from university import *
 from user import *
@@ -316,8 +316,10 @@ def course(university_acro=None, course=None):
                 # store the syllabus file into database
                 store_syllabus(stored_course.name_combined, file.filename, file.read()) 
                 # DEBUG (to make sure it was inserted into the db): 
-                # print(query("SELECT coursename FROM syllabus;"))
+                print(query("SELECT coursename FROM syllabus;"))
                 return redirect(url_for('course', university_acro=stored_university.acronym, course=stored_course.name_combined))
+
+        # handle syllabus download 
 
         # handle sort posts request 
         sort_response = request.form.get('sort-type')
@@ -381,19 +383,19 @@ def profile_page(username):
     
     return render_template("user_profile.html", user = user, active = "profile-page")
 
+@app.route("/download/<coursename>/<filename>") 
+def download(filename, coursename): 
+    """
+    Shows the user the chosen file in the browser 
+    User can download or preview the file
+    """
+    return download_syllabus(filename, coursename) 
+
+
 def main(): 
     '''
     Entry point for app
     '''
-    # DEBUG: university of kansas is added as the first university 
-    # UNIVERSITIES["ku"] = University(1, "university of kansas", "ku") # STORE: University
-    # UNIVERSITIES["ku"].courses["eecs-581"] = Course(1, 581, "eecs", "", "ku") # adding eecs 581 as a course
-
-    # DEBUG: first person is added to the session
-    # daemon_user = User(1, "Jonathon Blow")
-    # daemon_user.followed_universities.add(UNIVERSITIES["ku"])
-    # USERS[1] = daemon_user # STORE: user 
-
     try:
         app.run(debug=True, host='localhost', port=5001)
         print("It's running here")

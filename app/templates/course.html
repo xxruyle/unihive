@@ -162,7 +162,7 @@ Posts
     </form>
 
     <h2 class="mt-3">Syllabus</h2>
-    <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#syllabusModal">Submit Syllabus</button>
+    <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#syllabusModal">Upload</button>
     <!-- Modal Post -->
     <div class="modal fade" id="syllabusModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -188,6 +188,13 @@ Posts
         </div>
       </div>
     </div>
+
+    <br>
+    <div class="d-flex flex-column mb-3">
+        {% for filename in course.syllabus_names%} 
+        <a href="{{url_for('download', filename=filename, coursename=course.name_combined)}}">{{filename}}</a>
+        {% endfor %}
+    <div>
 {% endblock %}
 
 

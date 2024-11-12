@@ -5,9 +5,13 @@
 # Authors: Xavier Ruyle, Andrew Ward
 # Creation Date: 10/25/2024
 
+
+from io import BytesIO
+
 from course import *
 from db import query
 from department import *
+from flask import send_file
 from post import *
 from session import *
 from university import *
@@ -216,4 +220,34 @@ def sort_posts(sort_type : str, course: Course):
         course.sort_post_type = "Date Created" 
     elif sort_type == "Popularity": 
         course.sort_post_type = "Popularity" 
+
+################################################################################
+
+def download_syllabus(filename : str, course_name_combined : str) : 
+    """
+    Show a syllabus file from the sqlite database 
+
+    :param filename: the filename (ex: syllabus2024.pdf) 
+    :param course_name_combined: the syllabus from the particular course (ex: eecs-581) 
+    """
+    syllabus_data = query("""SELECT file FROM syllabus WHERE coursename = ? AND filename = ?;""" ,(course_name_combined,filename))
+    
+    if syllabus_data is None: 
+        return None
+
+    file_data = syllabus_data[0][0]
+    # print(file_data)
+    file_stream = BytesIO(file_data)
+
+    # shows the user the file in browser 
+    # if you wanted to download the file immediately after the request, change as_attachment
+    # to true 
+    return send_file(file_stream, as_attachment=False, download_name=filename) 
+
+    
+
+
+
+
+
 

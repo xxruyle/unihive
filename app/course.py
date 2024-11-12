@@ -155,6 +155,24 @@ class Course:
         # Deconstruct the query array to strings.
         return [i[0] for i in instructors]
 
+    @property 
+    def syllabus_names(self): 
+        """
+        Return a list of syllabus filenames that exist for this course 
+        """
+
+        syllabus_file_names = query(
+            """
+                SELECT filename FROM syllabus 
+                WHERE coursename = ?;
+            """
+            ,(self.name_combined,))
+
+
+        # Deconstruct the query array to strings.
+        return [name[0] for name in syllabus_file_names]
+
+
     @staticmethod
     def get_course_by_id(id: int):
         """
