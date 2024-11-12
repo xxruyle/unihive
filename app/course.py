@@ -25,6 +25,7 @@ class Course:
 
         # Full name, Ex: EECS-581
         self.name_combined = self.department.name + "-" + str(self.course_number)
+        self.sort_post_type = "Date Created" # default sort type 
 
     @property
     def posts(self):
@@ -36,13 +37,20 @@ class Course:
         # Avoid circular import.
         from post import Post
 
-        # Return a list of all posts that aren't replies.
-        return [Post(*params) for params in query(
-            """
+        if self.sort_post_type == "Date Created":
+            sort_by = "created"   
+        else: 
+            sort_by = "created" 
+
+        query_str = f"""
                 SELECT id, created, title, content, author, course FROM posts
                 WHERE course = ? AND parent IS NULL
-                ORDER BY created DESC;
-            """,
+                ORDER BY {sort_by};
+            """
+
+        # Return a list of all posts that aren't replies.
+        return [Post(*params) for params in query(
+            query_str,
             (self.id,)
         )]
 
@@ -265,6 +273,16 @@ class Course:
                 """,
                 (difficulty, grade, credit_hours, instructor, user.id, self.id)
             )
+
+            # also have to store inside course  (yeah this is bad)
+            # query(
+            #     """
+            #         UPDATE courses SET
+            #             hours      = COALESCE(?, hours),
+            #         WHERE user = ? AND course = ?;
+            #     """,
+            #     (credit_hours, user.id, self.id)
+            # )
         else:
             # Otherwise, if this is the first time,
             # we create a new entry for their info.
@@ -275,6 +293,7 @@ class Course:
                 """,
                 (user.id, self.id, difficulty, grade, credit_hours, instructor)
             )
+
 
 
 

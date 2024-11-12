@@ -5,18 +5,20 @@
 # Authors: Xavier Ruyle
 # Creation Date: 10/24/2024
 
+import signal
+import sys
+from functools import wraps
+
 import db
 from course import *
+from db import connection  # your existing database connection
 from db_util import *
-from flask import Flask, flash, redirect, render_template, request, url_for, session
-from werkzeug.security import generate_password_hash, check_password_hash
-from functools import wraps
+from flask import (Flask, flash, redirect, render_template, request, session,
+                   url_for)
 from session import *
 from university import *
 from user import *
-import signal
-import sys
-from db import connection  # your existing database connection
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__) # initialize flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # flask app secret key required for form requests
@@ -101,6 +103,8 @@ def login():
         if user_data and check_password_hash(user_data[1], password):
             # Set the session user ID
             SESSION.current_user_id = user_data[0]
+            USERS[user_data[0]] = User(user_data[0], username) # NOTE: need to store existing user data locally 
+            print(SESSION.current_user_id) 
             
             # Update last login timestamp
             query(
@@ -146,6 +150,7 @@ def register():
         )
         
         if existing_user:
+            USERS[existing_user[0]] = User(existing_user[0], username) # need to insert into local USERS still 
             flash('Username already exists.', 'error')
             return render_template('auth/register.html')
             
@@ -174,6 +179,8 @@ def register():
                 # Update the session with the new user
                 SESSION.current_user_id = new_user[0]
                 USERS[new_user[0]] = User(new_user[0], username)
+
+                print(SESSION.current_user_id) 
                 
                 flash('Registration successful! Welcome to UniHive!', 'success')
                 return redirect(url_for('home'))
@@ -208,11 +215,19 @@ def university(university_acro=None, university_name=None):
     if current_university is None:
         return render_template('404.html'), 404
 
+
     # detect if there is a follow request for the university 
     if request.method == "POST": 
         follow_response = request.form.get('follow-btn') 
         if follow_response: 
             store_university_follow(current_university) # STORE: University follow 
+
+        sort_response = request.form.get('sort-type') 
+        if sort_response: 
+            print(sort_response) 
+            sort_courses(sort_response, current_university)
+
+
 
     # render university home page 
     return render_template('university_home.html', university = current_university)  
@@ -303,6 +318,11 @@ def course(university_acro=None, course=None):
                 # DEBUG (to make sure it was inserted into the db): 
                 # print(query("SELECT coursename FROM syllabus;"))
                 return redirect(url_for('course', university_acro=stored_university.acronym, course=stored_course.name_combined))
+
+        # handle sort posts request 
+        sort_response = request.form.get('sort-type')
+        if sort_response: 
+            sort_posts(sort_response, stored_course) 
 
     return render_template('course.html', course = stored_course)  # render course html 
 

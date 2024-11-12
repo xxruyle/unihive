@@ -186,7 +186,34 @@ def store_post(course: Course, title: str, post_body: str):
         INSERT INTO posts (title, content, author, course)
         VALUES (?, ?, ?, ?);
         """,
-        (title, post_body, user.id, course.id)
+        (title, post_body, user.username, course.id)
     )
 
 ################################################################################
+
+def sort_courses(sort_type : str, university: University): 
+    """
+     Change University object's sort_course_type
+     This affects the university @property courses method 
+
+    :param sort_type: The available sort type options defined in universty_home.html.
+    :param university: The university object.
+    """
+    if sort_type == "Date Created":
+        university.sort_course_type = "created" 
+    elif sort_type == "Department": 
+        university.sort_course_type = "department" 
+
+def sort_posts(sort_type : str, course: Course): 
+    """
+     Change University object's sort_course_type
+     This affects the university @property courses method 
+
+    :param sort_type: The available sort type options defined in universty_home.html.
+    :param university: The university object.
+    """
+    if sort_type == "Date Created": 
+        course.sort_post_type = "Date Created" 
+    elif sort_type == "Popularity": 
+        course.sort_post_type = "Popularity" 
+

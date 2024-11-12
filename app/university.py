@@ -19,6 +19,7 @@ class University:
         self.acronym     = acronym     # ex: KU
         self.description = description # ex: Home of of the JayHawks
         self.logo        = logo        # Filepath to the logo
+        self.sort_course_type = "created" # default sort course type 
 
     @property
     def courses(self):
@@ -30,14 +31,19 @@ class University:
         # Yeah, this is a bit jank.
         from course import Course
 
+
+        query_str = f"""
+                SELECT id, name, description, course_number, department
+                FROM courses
+                WHERE university = ?
+                ORDER BY {self.sort_course_type} desc;                
+            """
         # Convert each database row into a Course object.
         return [Course(*params, self.id) for params in query(
-            """
-                SELECT id, name, description, course_number, department FROM courses
-                WHERE university = ?;
-            """,
+           query_str,
             (self.id,)
         )]
+
 
     @staticmethod
     def get_university_by_id(id: int):

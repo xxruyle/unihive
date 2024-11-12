@@ -40,7 +40,7 @@
             <!-- Right side - Profile/Login -->
             <div class="d-flex align-items-center">
                 {% if SESSION.current_user_id %}
-                    <span class="text-light me-3">{{ USERS[SESSION.current_user_id].name }}</span>
+                    <span class="text-light me-3">{{ USERS[SESSION.current_user_id].username }}</span>
                     <a href="{{ url_for('profile') }}" class="btn btn-outline-light btn-sm me-2">Profile</a>
                     <a href="{{ url_for('logout') }}" class="btn btn-outline-light btn-sm me-2">Logout</a>
                     <img src="{{ url_for('static', filename='profile pic.jpg') }}"
