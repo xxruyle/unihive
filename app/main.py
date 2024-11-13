@@ -201,7 +201,7 @@ def profile():
     if not user:
         SESSION.current_user_id = None
         return redirect(url_for('login'))
-    return render_template('user_profile.html', user=user)
+    return render_template('user_profile.html', user=user, recent_posts=get_posts_user_recent())
 
 @app.route("/u")
 @app.route("/u/<university_acro>", methods =["GET", "POST"])
@@ -381,7 +381,7 @@ def profile_page(username):
     if user is None:
         return render_template("404.html"), 404
     
-    return render_template("user_profile.html", user = user, active = "profile-page")
+    return render_template("user_profile.html", user = user, active = "profile-page", recent_posts=get_posts_user_recent())
 
 @app.route("/download/<coursename>/<filename>") 
 def download(filename, coursename): 

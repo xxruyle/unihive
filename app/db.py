@@ -171,6 +171,7 @@ def create_tables():
             title       VARCHAR NOT NULL,
             content     VARCHAR NOT NULL,
             author      INTEGER NOT NULL,
+            author_id   INTEGER NOT NULL, 
             course      INTEGER NOT NULL,
             likes       INTEGER DEFAULT 0,
             dislikes    INTEGER DEFAULT 0,

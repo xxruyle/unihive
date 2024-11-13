@@ -10,6 +10,7 @@ from enum import IntEnum
 from course import *
 from db import query
 from department import Department
+from session import SESSION
 from university import University
 
 COURSE_PARAMS = "courses.id, courses.name, description, course_number, department, courses.university"
@@ -53,6 +54,7 @@ class Course:
             query_str,
             (self.id,)
         )]
+
 
     @property
     def average_difficulty(self):

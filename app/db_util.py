@@ -112,6 +112,36 @@ def get_uni_and_course_from_route(university_acronym: str, course_name_combined:
         Course.get_course_by_name_combined(university, course_name_combined)
     )
 
+
+def get_posts_user_recent(): 
+    """
+    Get all the posts that the user has created recently 
+    Returns a list of posts that the user has recently created 
+    """
+    # Avoid circular import.
+    from post import Post
+
+    query_str = f"""
+            SELECT id, created, title, content, author, course FROM posts
+            WHERE author = ? AND parent IS NULL ORDER BY created DESC;
+        """
+
+    # Return a list of all posts that aren't replies.
+    # TODO: should be comparing the author id, not the author username for more safety but this works
+    posts = [Post(*params) for params in query(
+        query_str,
+        (USERS[SESSION.current_user_id].username,)
+    )] 
+
+    # kind of bad but it works 
+    # uses slicing to get recent posts
+    print(posts) 
+    if len(posts) > 4: 
+        return posts[:3]
+    else: 
+        return posts
+
+
 ################################################################################
 
 def store_syllabus(course_name_combined: str, file_name: str, file: bytes): 
@@ -187,10 +217,10 @@ def store_post(course: Course, title: str, post_body: str):
     # Insert a new post into the database.
     return query(
         """
-        INSERT INTO posts (title, content, author, course)
-        VALUES (?, ?, ?, ?);
+        INSERT INTO posts (title, content, author, author_id, course)
+        VALUES (?, ?, ?, ?, ?);
         """,
-        (title, post_body, user.username, course.id)
+        (title, post_body, user.username, user.id, course.id)
     )
 
 ################################################################################
@@ -206,7 +236,7 @@ def sort_courses(sort_type : str, university: University):
     if sort_type == "Date Created":
         university.sort_course_type = "created" 
     elif sort_type == "Department": 
-        university.sort_course_type = "department" 
+        university.sort_course_type = "name" 
 
 def sort_posts(sort_type : str, course: Course): 
     """
@@ -243,6 +273,8 @@ def download_syllabus(filename : str, course_name_combined : str) :
     # if you wanted to download the file immediately after the request, change as_attachment
     # to true 
     return send_file(file_stream, as_attachment=False, download_name=filename) 
+
+
 
     
 
