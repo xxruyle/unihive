@@ -18,6 +18,13 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
@@ -50,8 +57,8 @@
         <!-- Right side - Profile/Login -->
         <div class="d-flex align-items-center">
           {% if SESSION.current_user_id %}
-          <span class="text-light me-3"
-            >{{ USERS[SESSION.current_user_id].username }}</span
+          <span class="text-light mr-3"
+            >Logged in, {{ USERS[SESSION.current_user_id].username }}</span
           >
           <a
             href="{{ url_for('profile') }}"
@@ -64,7 +71,7 @@
             >Logout</a
           >
           <img
-            src="{{ url_for('static', filename='profile pic.jpg') }}"
+            src="{{ url_for('static', filename='profile_pic.jpg') }}"
             class="rounded-circle profile-img"
             alt="Profile"
           />
@@ -76,7 +83,7 @@
           >
             <span>Login</span>
             <img
-              src="{{ url_for('static', filename='profile pic.jpg') }}"
+              src="{{ url_for('static', filename='profile_pic.jpg') }}"
               class="rounded-circle profile-img"
               alt="Default Profile"
             />
@@ -101,6 +108,7 @@
       }
 
       .profile-img {
+        margin-left: 1em;
         width: 40px;
         height: 40px;
         object-fit: cover;

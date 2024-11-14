@@ -5,6 +5,7 @@
 # Authors: Xavier Ruyle
 # Creation Date: 10/24/2024
 
+import os
 import signal
 import sys
 from functools import wraps
@@ -19,15 +20,24 @@ from session import *
 from university import *
 from user import *
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'app/static'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'pdf'}
 
 app = Flask(__name__) # initialize flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # flask app secret key required for form requests
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 
 print("*" * 50)
 print("Starting UPDATED Flask app - Version 3")
 print(f"Python executable: {sys.executable}")
 print("*" * 50)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def signal_handler(sig, frame):
@@ -194,13 +204,32 @@ def register():
     return render_template('auth/register.html')
 
 
-@app.route("/profile")
+@app.route("/profile", methods = ["GET", "POST"])
 @login_required
 def profile():
     user = USERS.get(SESSION.current_user_id)
     if not user:
         SESSION.current_user_id = None
         return redirect(url_for('login'))
+
+
+    if request.method == "POST": 
+        # upload new profile pic 
+        if 'profile_picture' not in request.files: 
+            flash("No file selected") 
+            return redirect(url_for('profile', user=user, recent_posts=get_posts_user_recent()))
+        
+        file = request.files['profile_picture']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(url_for('profile', user=user, recent_posts=get_posts_user_recent()))
+
+        if file and allowed_file(file.filename): 
+            filename = secure_filename("profile_pic.jpg")
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('profile', user=user, recent_posts=get_posts_user_recent()))
+
+
     return render_template('user_profile.html', user=user, recent_posts=get_posts_user_recent())
 
 @app.route("/u")
@@ -312,11 +341,17 @@ def course(university_acro=None, course=None):
             # TODO: Make sure the file is a supported file type (pdf, docx)
             if file == '': # the file was not found
                 flash("File not found") 
-            else: 
+
+
+            if allowed_file(file.filename): 
+                filename = secure_filename(file.filename)  
                 # store the syllabus file into database
-                store_syllabus(stored_course.name_combined, file.filename, file.read()) 
+                store_syllabus(stored_course.name_combined, filename, file.read()) 
                 # DEBUG (to make sure it was inserted into the db): 
                 print(query("SELECT coursename FROM syllabus;"))
+                return redirect(url_for('course', university_acro=stored_university.acronym, course=stored_course.name_combined))
+            else: 
+                flash("That file type is not allowed")
                 return redirect(url_for('course', university_acro=stored_university.acronym, course=stored_course.name_combined))
 
         # handle syllabus download 

@@ -6,8 +6,7 @@
 <!-- Creation Date: 10/24/2024 -->
 
 {% extends 'base.html' %} {% block content_title %}Profile{% endblock %} {%
-block content_subtitle %}Manage Your Profile{% endblock %} {% block content_main
-%}
+block content_subtitle %}{% endblock %} {% block content_main %}
 <div class="container mt-5 pb-5">
   <div class="row">
     <!-- Profile Picture Section -->
@@ -23,7 +22,7 @@ block content_subtitle %}Manage Your Profile{% endblock %} {% block content_main
             />
             {% else %}
             <img
-              src="{{ url_for('static', filename='profile pic.jpg') }}"
+              src="{{ url_for('static', filename='profile_pic.jpg') }}"
               class="rounded-circle profile-picture"
               alt="Default Profile Picture"
             />
@@ -135,34 +134,36 @@ block content_subtitle %}Manage Your Profile{% endblock %} {% block content_main
               </p>
             </div>
           </div>
+
+          <div class="sidebar-header">Recent Posts</div>
+
+          {% for post in recent_posts %}
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <img
+                  src="https://via.placeholder.com/40"
+                  class="rounded-circle mr-2"
+                  alt="User"
+                />
+                <div class="px-3">
+                  <h6 class="mb-1">{{post.author}}</h6>
+                  <small class="text-muted">Posted on {{post.created}}</small>
+                </div>
+              </div>
+              <h5 class="card-title">{{post.title}}</h5>
+              <p class="card-text">{{post.content}}</p>
+              <a href="#" class="btn btn-primary"
+                >Replies ({{post.replies | length}})</a
+              >
+            </div>
+          </div>
+          {% endfor %}
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<h3>Recent Activity</h3>
-<!-- Posts -->
-{% for post in recent_posts %}
-<div class="card mb-4">
-  <div class="card-body">
-    <div class="d-flex align-items-center mb-3">
-      <img
-        src="https://via.placeholder.com/40"
-        class="rounded-circle mr-2"
-        alt="User"
-      />
-      <div class="px-3">
-        <h6 class="mb-1">{{post.author}}</h6>
-        <small class="text-muted">Posted on {{post.created}}</small>
-      </div>
-    </div>
-    <h5 class="card-title">{{post.title}}</h5>
-    <p class="card-text">{{post.content}}</p>
-    <a href="#" class="btn btn-primary">Replies ({{post.replies | length}})</a>
-  </div>
-</div>
-{% endfor %}
 
 <style>
   .profile-picture-container {
@@ -200,4 +201,3 @@ block content_subtitle %}Manage Your Profile{% endblock %} {% block content_main
   }
 </style>
 {% endblock %}
-
