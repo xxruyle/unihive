@@ -5,127 +5,199 @@
 <!-- Authors: Xavier Ruyle -->
 <!-- Creation Date: 10/24/2024 -->
 
-{% extends 'base.html' %}
-
-{% block content_title %}Profile{% endblock %}
-{% block content_subtitle %}Manage Your Profile{% endblock %}
-
-{% block content_main %}
+{% extends 'base.html' %} {% block content_title %}Profile{% endblock %} {%
+block content_subtitle %}{% endblock %} {% block content_main %}
 <div class="container mt-5 pb-5">
-    <div class="row">
-        <!-- Profile Picture Section -->
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
-                    <div class="profile-picture-container mb-4">
-                        {% if USERS[SESSION.current_user_id].profile_img %}
-                            <img src="{{ USERS[SESSION.current_user_id].profile_img }}"
-                                 class="rounded-circle profile-picture"
-                                 alt="Profile Picture">
-                        {% else %}
-                            <img src="{{ url_for('static', filename='profile pic.jpg') }}"
-                                 class="rounded-circle profile-picture"
-                                 alt="Default Profile Picture">
-                        {% endif %}
-                    </div>
-                    <h4 class="card-title">{{ USERS[SESSION.current_user_id].name }}</h4>
-                    
-                    <form method="POST" enctype="multipart/form-data" class="mt-4">
-                        <div class="mb-3">
-                            <label for="profile_picture" class="form-label">Update Profile Picture</label>
-                            <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Upload Picture</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+  <div class="row">
+    <!-- Profile Picture Section -->
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          <div class="profile-picture-container mb-4">
+            {% if USERS[SESSION.current_user_id].profile_img %}
+            <img
+              src="{{ USERS[SESSION.current_user_id].profile_img }}"
+              class="rounded-circle profile-picture"
+              alt="Profile Picture"
+            />
+            {% else %}
+            <img
+              src="{{ url_for('static', filename='profile_pic.jpg') }}"
+              class="rounded-circle profile-picture"
+              alt="Default Profile Picture"
+            />
+            {% endif %}
+          </div>
+          <h4 class="card-title">{{ USERS[SESSION.current_user_id].name }}</h4>
 
-        <!-- Profile Information Section -->
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title mb-4">Profile Information</h5>
-                    <form method="POST" class="needs-validation" novalidate>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="firstName" class="form-label">First Name</label>
-                                <input type="text" class="form-control" id="firstName" name="firstName" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="lastName" class="form-label">Last Name</label>
-                                <input type="text" class="form-control" id="lastName" name="lastName" required>
-                            </div>
-                            <div class="col-12">
-                                <label for="bio" class="form-label">Bio</label>
-                                <textarea class="form-control" id="bio" name="bio" rows="3"></textarea>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="major" class="form-label">Major</label>
-                                <input type="text" class="form-control" id="major" name="major">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="graduationYear" class="form-label">Graduation Year</label>
-                                <input type="number" class="form-control" id="graduationYear" name="graduationYear">
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                        </div>
-                    </form>
-                </div>
+          <form method="POST" enctype="multipart/form-data" class="mt-4">
+            <div class="mb-3">
+              <label for="profile_picture" class="form-label"
+                >Update Profile Picture</label
+              >
+              <input
+                type="file"
+                class="form-control"
+                id="profile_picture"
+                name="profile_picture"
+                accept="image/*"
+              />
             </div>
-
-            <!-- Activity Summary Card -->
-            <div class="card shadow-sm mt-4">
-                <div class="card-body">
-                    <h5 class="card-title">Activity Summary</h5>
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <h6>Following</h6>
-                            <p class="mb-0">{{ USERS[SESSION.current_user_id].followed_universities|length }} Universities</p>
-                            <p>{{ USERS[SESSION.current_user_id].followed_courses|length }} Courses</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              Upload Picture
+            </button>
+          </form>
         </div>
+      </div>
     </div>
+
+    <!-- Profile Information Section -->
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title mb-4">Profile Information</h5>
+          <form method="POST" class="needs-validation" novalidate>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="firstName" class="form-label">First Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="firstName"
+                  name="firstName"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="lastName"
+                  name="lastName"
+                  required
+                />
+              </div>
+              <div class="col-12">
+                <label for="bio" class="form-label">Bio</label>
+                <textarea
+                  class="form-control"
+                  id="bio"
+                  name="bio"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div class="col-md-6">
+                <label for="major" class="form-label">Major</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="major"
+                  name="major"
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="graduationYear" class="form-label"
+                  >Graduation Year</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="graduationYear"
+                  name="graduationYear"
+                />
+              </div>
+            </div>
+            <div class="mt-4">
+              <button type="submit" class="btn btn-primary">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Activity Summary Card -->
+      <div class="card shadow-sm mt-4">
+        <div class="card-body">
+          <h5 class="card-title">Activity Summary</h5>
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <h6>Following</h6>
+              <p class="mb-0">
+                {{ USERS[SESSION.current_user_id].followed_universities|length
+                }} Universities
+              </p>
+              <p>
+                {{ USERS[SESSION.current_user_id].followed_courses|length }}
+                Courses
+              </p>
+            </div>
+          </div>
+
+          <div class="sidebar-header">Recent Posts</div>
+
+          {% for post in recent_posts %}
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <img
+                  src="https://via.placeholder.com/40"
+                  class="rounded-circle mr-2"
+                  alt="User"
+                />
+                <div class="px-3">
+                  <h6 class="mb-1">{{post.author}}</h6>
+                  <small class="text-muted">Posted on {{post.created}}</small>
+                </div>
+              </div>
+              <h5 class="card-title">{{post.title}}</h5>
+              <p class="card-text">{{post.content}}</p>
+              <a href="#" class="btn btn-primary"
+                >Replies ({{post.replies | length}})</a
+              >
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <style>
-.profile-picture-container {
+  .profile-picture-container {
     position: relative;
     width: 150px;
     height: 150px;
     margin: 0 auto;
-}
+  }
 
-.profile-picture {
+  .profile-picture {
     width: 150px;
     height: 150px;
     object-fit: cover;
     border: 3px solid #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-.card {
+  .card {
     border: none;
     border-radius: 10px;
     transition: transform 0.2s;
-}
+  }
 
-.card:hover {
+  .card:hover {
     transform: translateY(-2px);
-}
+  }
 
-.form-control {
+  .form-control {
     border-radius: 8px;
-}
+  }
 
-.btn-primary {
+  .btn-primary {
     border-radius: 8px;
     padding: 0.5rem 1.5rem;
-}
+  }
 </style>
 {% endblock %}

@@ -5,9 +5,13 @@
 # Authors: Xavier Ruyle, Andrew Ward
 # Creation Date: 10/25/2024
 
+
+from io import BytesIO
+
 from course import *
 from db import query
 from department import *
+from flask import send_file
 from post import *
 from session import *
 from university import *
@@ -108,6 +112,36 @@ def get_uni_and_course_from_route(university_acronym: str, course_name_combined:
         Course.get_course_by_name_combined(university, course_name_combined)
     )
 
+
+def get_posts_user_recent(): 
+    """
+    Get all the posts that the user has created recently 
+    Returns a list of posts that the user has recently created 
+    """
+    # Avoid circular import.
+    from post import Post
+
+    query_str = f"""
+            SELECT id, created, title, content, author, course FROM posts
+            WHERE author = ? AND parent IS NULL ORDER BY created DESC;
+        """
+
+    # Return a list of all posts that aren't replies.
+    # TODO: should be comparing the author id, not the author username for more safety but this works
+    posts = [Post(*params) for params in query(
+        query_str,
+        (USERS[SESSION.current_user_id].username,)
+    )] 
+
+    # kind of bad but it works 
+    # uses slicing to get recent posts
+    print(posts) 
+    if len(posts) > 4: 
+        return posts[:3]
+    else: 
+        return posts
+
+
 ################################################################################
 
 def store_syllabus(course_name_combined: str, file_name: str, file: bytes): 
@@ -183,10 +217,69 @@ def store_post(course: Course, title: str, post_body: str):
     # Insert a new post into the database.
     return query(
         """
-        INSERT INTO posts (title, content, author, course)
-        VALUES (?, ?, ?, ?);
+        INSERT INTO posts (title, content, author, author_id, course)
+        VALUES (?, ?, ?, ?, ?);
         """,
-        (title, post_body, user.id, course.id)
+        (title, post_body, user.username, user.id, course.id)
     )
 
 ################################################################################
+
+def sort_courses(sort_type : str, university: University): 
+    """
+     Change University object's sort_course_type
+     This affects the university @property courses method 
+
+    :param sort_type: The available sort type options defined in universty_home.html.
+    :param university: The university object.
+    """
+    if sort_type == "Date Created":
+        university.sort_course_type = "created" 
+    elif sort_type == "Department": 
+        university.sort_course_type = "name" 
+
+def sort_posts(sort_type : str, course: Course): 
+    """
+     Change University object's sort_course_type
+     This affects the university @property courses method 
+
+    :param sort_type: The available sort type options defined in universty_home.html.
+    :param university: The university object.
+    """
+    if sort_type == "Date Created": 
+        course.sort_post_type = "Date Created" 
+    elif sort_type == "Popularity": 
+        course.sort_post_type = "Popularity" 
+
+################################################################################
+
+def download_syllabus(filename : str, course_name_combined : str) : 
+    """
+    Show a syllabus file from the sqlite database 
+
+    :param filename: the filename (ex: syllabus2024.pdf) 
+    :param course_name_combined: the syllabus from the particular course (ex: eecs-581) 
+    """
+    syllabus_data = query("""SELECT file FROM syllabus WHERE coursename = ? AND filename = ?;""" ,(course_name_combined,filename))
+    
+    if syllabus_data is None: 
+        return None
+
+    file_data = syllabus_data[0][0]
+    # print(file_data)
+    file_stream = BytesIO(file_data)
+
+    # shows the user the file in browser 
+    # if you wanted to download the file immediately after the request, change as_attachment
+    # to true 
+    return send_file(file_stream, as_attachment=False, download_name=filename) 
+
+
+
+    
+
+
+
+
+
+

@@ -5,43 +5,41 @@
 <!-- Authors: Xavier Ruyle -->
 <!-- Creation Date: 10/24/2024 -->
 
-{% extends 'base.html' %}
-
-{% block content_title %}Create University{% endblock %}
-{% block content_subtitle %}Create University Form{% endblock %}
-
-
-{% block content_main %}
-
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-    <div class="alert alert-danger" role="alert">
-        {{ message }}
-    </div>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
+{% extends 'base.html' %} {% block content_title %}Create University{% endblock
+%} {% block content_subtitle %}{% endblock %} {% block content_main %} {% with
+messages = get_flashed_messages() %} {% if messages %}
+<ul class="flashes">
+  {% for message in messages %}
+  <div class="alert alert-danger" role="alert">{{ message }}</div>
+  {% endfor %}
+</ul>
+{% endif %} {% endwith %}
 
 <form action="create-university" method="post">
-
-
-
   <div class="form-group">
     <label for="university">University Name</label>
-    <input type="text" class="form-control" name="university" for="university" id="university" placeholder="University of Kansas">
+    <input
+      type="text"
+      class="form-control"
+      name="university"
+      for="university"
+      id="university"
+      placeholder="University of Kansas"
+    />
   </div>
 
   <div class="form-group">
     <label for="university-acro">University Acronym</label>
-    <input type="text" class="form-control" name="university-acro" for="university-acro" id="university-acro" placeholder="KU">
+    <input
+      type="text"
+      class="form-control"
+      name="university-acro"
+      for="university-acro"
+      id="university-acro"
+      placeholder="KU"
+    />
   </div>
 
-<button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-  {% endblock %}
-
-
-
+{% endblock %}

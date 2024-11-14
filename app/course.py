@@ -10,6 +10,7 @@ from enum import IntEnum
 from course import *
 from db import query
 from department import Department
+from session import SESSION
 from university import University
 
 COURSE_PARAMS = "courses.id, courses.name, description, course_number, department, courses.university"
@@ -25,6 +26,7 @@ class Course:
 
         # Full name, Ex: EECS-581
         self.name_combined = self.department.name + "-" + str(self.course_number)
+        self.sort_post_type = "Date Created" # default sort type 
 
     @property
     def posts(self):
@@ -36,15 +38,23 @@ class Course:
         # Avoid circular import.
         from post import Post
 
-        # Return a list of all posts that aren't replies.
-        return [Post(*params) for params in query(
-            """
+        if self.sort_post_type == "Date Created":
+            sort_by = "created"   
+        else: 
+            sort_by = "created" 
+
+        query_str = f"""
                 SELECT id, created, title, content, author, course FROM posts
                 WHERE course = ? AND parent IS NULL
-                ORDER BY created DESC;
-            """,
+                ORDER BY {sort_by};
+            """
+
+        # Return a list of all posts that aren't replies.
+        return [Post(*params) for params in query(
+            query_str,
             (self.id,)
         )]
+
 
     @property
     def average_difficulty(self):
@@ -146,6 +156,24 @@ class Course:
 
         # Deconstruct the query array to strings.
         return [i[0] for i in instructors]
+
+    @property 
+    def syllabus_names(self): 
+        """
+        Return a list of syllabus filenames that exist for this course 
+        """
+
+        syllabus_file_names = query(
+            """
+                SELECT filename FROM syllabus 
+                WHERE coursename = ?;
+            """
+            ,(self.name_combined,))
+
+
+        # Deconstruct the query array to strings.
+        return [name[0] for name in syllabus_file_names]
+
 
     @staticmethod
     def get_course_by_id(id: int):
@@ -265,6 +293,16 @@ class Course:
                 """,
                 (difficulty, grade, credit_hours, instructor, user.id, self.id)
             )
+
+            # also have to store inside course  (yeah this is bad)
+            # query(
+            #     """
+            #         UPDATE courses SET
+            #             hours      = COALESCE(?, hours),
+            #         WHERE user = ? AND course = ?;
+            #     """,
+            #     (credit_hours, user.id, self.id)
+            # )
         else:
             # Otherwise, if this is the first time,
             # we create a new entry for their info.
@@ -275,6 +313,7 @@ class Course:
                 """,
                 (user.id, self.id, difficulty, grade, credit_hours, instructor)
             )
+
 
 
 

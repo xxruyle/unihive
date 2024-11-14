@@ -5,31 +5,63 @@
 <!-- Authors: Xavier Ruyle -->
 <!-- Creation Date: 10/24/2024 -->
 
-{% extends 'base.html' %}
-
-{% block sidebar_content %} 
-{% endblock %}
-
-{% block content_title %}University Home - {{university.acronym}}{% endblock %}
-{% block content_subtitle %}
+{% extends 'base.html' %} {% block sidebar_content %} {% endblock %} {% block
+content_title %}University Home - {{university.acronym}}{% endblock %} {% block
+content_subtitle %}
 
 <form action="{{course}}" method="post">
-<input type="hidden">
-<button type="submit" class="btn btn-info mt-3" name="follow-btn" value="follow">Follow</button>
-</form><br>
-Trending Courses
-{% endblock %}
+  <input type="hidden" />
+  <button
+    type="submit"
+    class="btn btn-secondary mt-3"
+    name="follow-btn"
+    value="follow"
+  >
+    Follow
+  </button>
+</form>
+<br />
+Courses {% endblock %} {% block content_main %}
 
-
-{% block content_main %}
+<form method="POST">
+  <div class="row w-10 mb-2">
+    <div class="col">
+      <input
+        class="form-control w-20"
+        type="text"
+        placeholder="Sort By"
+        readonly
+      />
+      <select
+        class="form-control form-control-sm"
+        id="sort-type"
+        name="sort-type"
+        for="sort-type"
+      >
+        <option>Date Created</option>
+        <option>Department</option>
+        <!-- <option>Grade</option> -->
+        <!-- <option>Difficulty</option> -->
+        <!-- <option>Credit Hours</option> -->
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Sort</button>
+  </div>
+</form>
 
 <div class="list-group">
-    {% for course in university.courses %}
-    <a href="{{url_for('course', university_acro=university.acronym, course=course.name_combined)}}" class="list-group-item list-group-item-action">{{course.name_combined}}</a>
-    {% endfor %}
+  {% for course in university.courses %}
+  <a
+    href="{{url_for('course', university_acro=university.acronym, course=course.name_combined)}}"
+    class="list-group-item list-group-item-action"
+    >{{course.name_combined}}</a
+  >
+  {% endfor %}
 </div>
 
-  <!-- <a href="#" class="list-group-item list-group-item-action">EECS 581</a> -->
+<!-- <a href="#" class="list-group-item list-group-item-action">EECS 581</a> -->
 
-<a href="{{url_for('create_course')}}"><button type="button" class="btn btn-dark mt-4">Create Course</button></a>
+<a href="{{url_for('create_course')}}"
+  ><button type="button" class="btn btn-dark mt-4">Create Course</button></a
+>
 {% endblock %}

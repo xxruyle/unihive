@@ -5,27 +5,39 @@
 # Authors: Xavier Ruyle
 # Creation Date: 10/24/2024
 
+import os
+import signal
+import sys
+from functools import wraps
+
 import db
 from course import *
+from db import connection  # your existing database connection
 from db_util import *
-from flask import Flask, flash, redirect, render_template, request, url_for, session
-from werkzeug.security import generate_password_hash, check_password_hash
-from functools import wraps
+from flask import (Flask, flash, redirect, render_template, request,
+                   send_from_directory, session, url_for)
 from session import *
 from university import *
 from user import *
-import signal
-import sys
-from db import connection  # your existing database connection
+from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'app/static'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'pdf'}
 
 app = Flask(__name__) # initialize flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # flask app secret key required for form requests
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 
 print("*" * 50)
 print("Starting UPDATED Flask app - Version 3")
 print(f"Python executable: {sys.executable}")
 print("*" * 50)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def signal_handler(sig, frame):
@@ -101,6 +113,8 @@ def login():
         if user_data and check_password_hash(user_data[1], password):
             # Set the session user ID
             SESSION.current_user_id = user_data[0]
+            USERS[user_data[0]] = User(user_data[0], username) # NOTE: need to store existing user data locally 
+            print(SESSION.current_user_id) 
             
             # Update last login timestamp
             query(
@@ -146,6 +160,7 @@ def register():
         )
         
         if existing_user:
+            USERS[existing_user[0]] = User(existing_user[0], username) # need to insert into local USERS still 
             flash('Username already exists.', 'error')
             return render_template('auth/register.html')
             
@@ -174,6 +189,8 @@ def register():
                 # Update the session with the new user
                 SESSION.current_user_id = new_user[0]
                 USERS[new_user[0]] = User(new_user[0], username)
+
+                print(SESSION.current_user_id) 
                 
                 flash('Registration successful! Welcome to UniHive!', 'success')
                 return redirect(url_for('home'))
@@ -187,14 +204,33 @@ def register():
     return render_template('auth/register.html')
 
 
-@app.route("/profile")
+@app.route("/profile", methods = ["GET", "POST"])
 @login_required
 def profile():
     user = USERS.get(SESSION.current_user_id)
     if not user:
         SESSION.current_user_id = None
         return redirect(url_for('login'))
-    return render_template('user_profile.html', user=user)
+
+
+    if request.method == "POST": 
+        # upload new profile pic 
+        if 'profile_picture' not in request.files: 
+            flash("No file selected") 
+            return redirect(url_for('profile', user=user, recent_posts=get_posts_user_recent()))
+        
+        file = request.files['profile_picture']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(url_for('profile', user=user, recent_posts=get_posts_user_recent()))
+
+        if file and allowed_file(file.filename): 
+            filename = secure_filename("profile_pic.jpg")
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('profile', user=user, recent_posts=get_posts_user_recent()))
+
+
+    return render_template('user_profile.html', user=user, recent_posts=get_posts_user_recent())
 
 @app.route("/u")
 @app.route("/u/<university_acro>", methods =["GET", "POST"])
@@ -208,11 +244,19 @@ def university(university_acro=None, university_name=None):
     if current_university is None:
         return render_template('404.html'), 404
 
+
     # detect if there is a follow request for the university 
     if request.method == "POST": 
         follow_response = request.form.get('follow-btn') 
         if follow_response: 
             store_university_follow(current_university) # STORE: University follow 
+
+        sort_response = request.form.get('sort-type') 
+        if sort_response: 
+            print(sort_response) 
+            sort_courses(sort_response, current_university)
+
+
 
     # render university home page 
     return render_template('university_home.html', university = current_university)  
@@ -297,12 +341,25 @@ def course(university_acro=None, course=None):
             # TODO: Make sure the file is a supported file type (pdf, docx)
             if file == '': # the file was not found
                 flash("File not found") 
-            else: 
+
+
+            if allowed_file(file.filename): 
+                filename = secure_filename(file.filename)  
                 # store the syllabus file into database
-                store_syllabus(stored_course.name_combined, file.filename, file.read()) 
+                store_syllabus(stored_course.name_combined, filename, file.read()) 
                 # DEBUG (to make sure it was inserted into the db): 
-                # print(query("SELECT coursename FROM syllabus;"))
+                print(query("SELECT coursename FROM syllabus;"))
                 return redirect(url_for('course', university_acro=stored_university.acronym, course=stored_course.name_combined))
+            else: 
+                flash("That file type is not allowed")
+                return redirect(url_for('course', university_acro=stored_university.acronym, course=stored_course.name_combined))
+
+        # handle syllabus download 
+
+        # handle sort posts request 
+        sort_response = request.form.get('sort-type')
+        if sort_response: 
+            sort_posts(sort_response, stored_course) 
 
     return render_template('course.html', course = stored_course)  # render course html 
 
@@ -359,21 +416,21 @@ def profile_page(username):
     if user is None:
         return render_template("404.html"), 404
     
-    return render_template("user_profile.html", user = user, active = "profile-page")
+    return render_template("user_profile.html", user = user, active = "profile-page", recent_posts=get_posts_user_recent())
+
+@app.route("/download/<coursename>/<filename>") 
+def download(filename, coursename): 
+    """
+    Shows the user the chosen file in the browser 
+    User can download or preview the file
+    """
+    return download_syllabus(filename, coursename) 
+
 
 def main(): 
     '''
     Entry point for app
     '''
-    # DEBUG: university of kansas is added as the first university 
-    # UNIVERSITIES["ku"] = University(1, "university of kansas", "ku") # STORE: University
-    # UNIVERSITIES["ku"].courses["eecs-581"] = Course(1, 581, "eecs", "", "ku") # adding eecs 581 as a course
-
-    # DEBUG: first person is added to the session
-    # daemon_user = User(1, "Jonathon Blow")
-    # daemon_user.followed_universities.add(UNIVERSITIES["ku"])
-    # USERS[1] = daemon_user # STORE: user 
-
     try:
         app.run(debug=True, host='localhost', port=5001)
         print("It's running here")

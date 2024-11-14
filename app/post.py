@@ -13,12 +13,12 @@ from user import User
 
 
 class Post: 
-    def __init__(self, id, created, title, content, author_id, course_id): 
+    def __init__(self, id, created, title, content, author, course_id): 
         self.id      = id                                 # Database ID       
         self.created = created                            # Date Created  
         self.title   = title                              # Title of post        
         self.content = content                            # Post body  
-        self.author  = "test-user"                        # @TEMPORARY, author   
+        self.author  = author                        # @TEMPORARY, author   
         self.course  = Course.get_course_by_id(course_id) # Course post belongs to  
 
     @property

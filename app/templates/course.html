@@ -17,7 +17,32 @@ Posts
 {% endblock %}
 
 {% block content_main %}
+
     <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Post</button>
+    <!-- Sort by  -->
+<form method="POST">
+  <div class="row w-10 mb-2">
+    <div class="col">
+      <input
+        class="form-control w-20"
+        type="text"
+        placeholder="Sort By"
+        readonly
+      />
+      <select
+        class="form-control form-control-sm"
+        id="sort-type"
+        name="sort-type"
+        for="sort-type"
+      >
+        <option>Date Created</option>
+        <option>Popularity</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Sort</button>
+  </div>
+</form>
+
     <!-- Modal Post -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -58,7 +83,7 @@ Posts
                 <img src="https://via.placeholder.com/40" class="rounded-circle mr-2" alt="User">
                 <div class="px-3">
                     <h6 class="mb-1">{{post.author}}</h6>
-                    <small class="text-muted">Posted on {{post.date_posted}}</small>
+                    <small class="text-muted">Posted on {{post.created}}</small>
                 </div>
             </div>
             <h5 class="card-title">{{post.title}}</h5>
@@ -137,7 +162,7 @@ Posts
     </form>
 
     <h2 class="mt-3">Syllabus</h2>
-    <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#syllabusModal">Submit Syllabus</button>
+    <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#syllabusModal">Upload</button>
     <!-- Modal Post -->
     <div class="modal fade" id="syllabusModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -159,10 +184,16 @@ Posts
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
         </form>
-
         </div>
       </div>
     </div>
+
+    <br>
+    <div class="d-flex flex-column mb-3">
+        {% for filename in course.syllabus_names%} 
+        <a href="{{url_for('download', filename=filename, coursename=course.name_combined)}}">{{filename}}</a>
+        {% endfor %}
+    <div>
 {% endblock %}
 
 
