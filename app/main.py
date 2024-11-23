@@ -259,7 +259,6 @@ def university(university_acro=None, university_name=None):
 
         sort_response = request.form.get('sort-type') 
         if sort_response: 
-            print(sort_response) 
             sort_courses(sort_response, current_university)
 
 

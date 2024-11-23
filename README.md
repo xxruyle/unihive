@@ -30,6 +30,19 @@ In the project root directory:
 $ python3 app/main.py
 ```
 
+Alternatively you can use the flask command to start: 
+```
+$ flask --app app/main run --debug
+```
+
+The command line output should be running and show a localhost url: 
+
+For example:
+```
+$  Running on http://127.0.0.1:5000
+```
+Copy and paste this url into your browser
+
 ## Tech Stack 
 - Flask 
 - Sqlite
