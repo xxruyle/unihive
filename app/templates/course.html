@@ -77,24 +77,25 @@ Posts
 
         <!-- Posts -->
         {% for post in course.posts %}
-      <div class="card mb-4">
-        <div class="card-body">
-            <div class="d-flex align-items-center mb-3">
-                <img src="https://via.placeholder.com/40" class="rounded-circle mr-2" alt="User">
-                <div class="px-3">
-                    <h6 class="mb-1">{{post.author}}</h6>
-                    <small class="text-muted">Posted on {{post.created}}</small>
-                </div>
+        <a class="big-link" href="{{url_for('post', university_acro=course.university.acronym, course_name=course.name_combined, post_identifier=post.id)}}">
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                  <img src="https://via.placeholder.com/40" class="rounded-circle mr-2" alt="User">
+                  <div class="px-3">
+                      <h6 class="mb-1">{{post.author}}</h6>
+                      <small class="text-muted">Posted on {{post.created}}</small>
+                  </div>
+              </div>
+              <h5 class="card-title">{{post.title}}</h5>
+              <p class="card-text">{{post.content}}</p>
+              <a href="#" class="btn btn-primary">Replies ({{post.replies | length}})</a>
+              <div class="mt-2">
+                  <small>Posted in <a href="{{url_for('course', university_acro=course.university.acronym, course=course.name_combined)}}" class="text-primary">{{course.university.acronym}}/{{course.name_combined}}</a></small>
+              </div>
             </div>
-            <h5 class="card-title">{{post.title}}</h5>
-            <p class="card-text">{{post.content}}</p>
-            <a href="#" class="btn btn-primary">Replies ({{post.replies | length}})</a>
-            <div class="mt-2">
-                <small>Posted in <a href="{{url_for('course', university_acro=course.university.acronym, course=course.name_combined)}}" class="text-primary">{{course.university.acronym}}/{{course.name_combined}}</a></small>
-            </div>
-        </div>
-    </div>
-
+          </div>
+        </a>
         {% endfor %}
 
 

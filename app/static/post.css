@@ -1,0 +1,193 @@
+h1, h2, h3, h4, h5, p {
+    margin: 0;
+}
+
+#post-card {
+    margin-top: -2rem;
+    padding-bottom: 1.5em;
+}
+
+.card.padded {
+    padding: 1em;
+}
+
+.profile-picture {
+    max-width: 4em;
+    max-height: 4em;
+}
+
+.source {
+    font-size: 1.1em;
+}
+
+.author {
+    font-size: 1.1em;
+    color: black;
+}
+
+.date {
+    font-size: 0.9em;
+    margin-top: 0.1em;
+    margin-bottom: 0.4em;
+    color: gray;
+}
+
+#author-box {
+    margin-bottom: 0.4em;
+}
+
+.side {
+    color: gray;
+}
+
+.vertical-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+hr {
+    margin: 1em 0;
+}
+
+#post-title {
+    margin-top: 0em;
+}
+
+#post-content {
+    margin-top: 0.5em;
+}
+
+#info-card {
+    margin-top: 0.5em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.75em;
+}
+
+#info-card > div:first-child {
+    display: flex;
+    flex-direction: row;
+}
+
+.bubble {
+    background: none;
+    border-radius: 100vw;
+    border: 1px solid rgba(0,0,0,0.5);
+    padding: 0.05em 0.75em;
+    margin-right: 0.5em;
+}
+
+div:last-child > .bubble {
+    margin-right: 0
+}
+
+button.bubble {
+    cursor: pointer;
+}
+
+#reply-card {
+    margin-top: 1.5em;
+}
+
+
+
+
+
+.modal-body textarea {
+    width: 100%;
+    padding: 0.5em;
+}
+
+.modal-footer {
+    display: block;
+}
+
+.modal-footer > div {
+    margin-left: auto;
+    width: max-content;
+}
+
+.modal-footer button {
+    background-color: gray;
+    margin-left: 0.5em;
+}
+
+.modal-footer button:last-child {
+    background-color: #1d64c1;
+}
+
+
+.reply-block {
+    padding: 0em 0 0em 0.75em;
+    margin: 0.5em 0 0.5em 0em;
+    border-left: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.reply-block:last-child {
+    margin-bottom: 0;
+}
+
+.reply-author {
+    color: gray;
+}
+
+.add-sub-reply {
+    color: gray;
+    border: 1px solid gray;
+    border-radius: 100vw;
+    cursor: pointer;
+    background: none;
+    padding: 0.1em 0.6em;
+    font-size: 0.75em;
+    margin-left: -0.25em;
+}
+
+#reply-header {
+    margin-bottom: 0.25em;
+}
+
+.reply-options {
+    display: flex;
+    margin-left: -0.1em;
+}
+
+.reply-options .bubble {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.75rem;
+    padding: 0.025em 0.75em;
+    margin-right: 0.25em;
+}
+
+.side {
+    font-style: italic;
+    font-size: 0.9em;
+    color: rgba(0, 0, 0, 0.25);
+}
+
+.separator {
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+}
+
+.reply-body {
+    margin: 0.3em 0;
+}
+
+.bubble.danger {
+    border-color: darkred;
+    color: darkred;
+}
+
+.post-left-bar {
+    margin-left: 0.25em;
+    padding-left: 0.75em;
+    border-left: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.reply-left-bar {
+    margin-left: 0.5em;
+    padding-left: 0.75em;
+    border-left: 1px solid rgba(0, 0, 0, 0.5);
+}

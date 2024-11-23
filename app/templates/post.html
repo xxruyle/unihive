@@ -1,0 +1,258 @@
+<!-- Filename: course.py       -->
+<!-- Description: This HTML page displays a post and its replies -->
+<!-- Inputs: base.html         -->
+<!-- Output: None              -->
+<!-- Authors: Xavier Ruyle     -->
+<!-- Creation Date: 11/16/2024 -->
+
+{% extends 'base.html' %}
+
+{% block content %}{{post.title}}{% endblock %}
+
+{% block content_main %}
+<link rel="stylesheet" href="{{url_for('static', filename='post.css')}}" />
+<style>
+    h1, h2 { margin: 0; };
+</style>
+
+<div id="post-card" class="card padded">
+    <div id="author-box" class="horizontal">
+        {% if post.author.profile_img %}
+        <img
+        src="{{ post.author.profile_img }}"
+        class="rounded-circle profile-picture"
+        alt="Profile Picture"
+        />
+        {% else %}
+        <img
+        src="{{ url_for('static', filename='profile_pic.jpg') }}"
+        class="rounded-circle profile-picture"
+        alt="Default Profile Picture"
+        />
+        {% endif %}
+        <div class="vertical-center">
+            <h4 class="source">
+                <a href="{{url_for('university', university_acro=post.course.university.acronym)}}">
+                    {{post.course.university.name}}
+                </a>
+                / 
+                <a href="{{url_for('course', university_acro=post.course.university.acronym, course=post.course.name_combined)}}">
+                    {{post.course.name_combined}}
+                </a>
+            </h4>
+            <h5 class="date">Posted on {{post.created}}</h5>
+            {% if post.author is not none %}
+            <h5 class="author">{{post.author.username}}</h5>
+            {% else %}
+            <h5 class="side">[Deleted]</h5>
+            {% endif %}
+        </div>
+    </div>
+
+    <hr>
+    
+    <h2 id="post-title">{{post.title}}</h2>
+    <p id="post-content">{{post.content}}</p>
+</div>
+
+<div id="info-card" class="card">
+    <div>
+        <div>
+            <form action="{{post.title}}" method="POST">
+            <button class="bubble" type="submit" name="like-btn" value="{{post.id}}">
+                <span>Like</span>
+                <span>{{post.likes}}</span>
+            </button>
+            </form>
+        </div>
+        <div>
+            <form action="{{post.title}}" method="POST">
+            <button class="bubble" type="submit" name="dislike-btn" value="{{post.id}}">
+                <span>Dislike</span>
+                <span>{{post.dislikes}}</span>
+            </button>
+            </form>
+        </div>
+        <div>
+            <div class="bubble">
+                <span>Replies {{post.replies | length}}</span> 
+            </div>
+        </div>
+
+        {% if SESSION.current_user_id is not none %}
+        {% if post.authored_by(SESSION.current_user_id) %}
+        <div class="post-left-bar">  
+            <button class="bubble warn edit" type="submit" name="edit" value="{{post.id}}" original="{{post.content}}">
+                <span>Edit</span>
+            </button>
+        </div>
+        <div>
+            <form action="{{post.title}}" method="POST">
+            <button class="bubble danger" type="submit" name="delete" value="{{post.id}}">
+                <span>Delete</span>
+            </button>
+            </form>
+        </div>
+        {% endif %}
+        {% endif %}
+
+    </div>
+    <div>
+        {% if SESSION.current_user_id is not none %}
+        <button class="bubble add-reply" value="{{post.id}}">Add a Reply</button>
+        {% endif %}
+    </div>
+</div>
+
+<div id="reply-card" class="card padded">
+    <h4 id="reply-header">Replies <span>({{post.replies | length}})</span></h4>
+    <div id="reply-container">
+        {% macro recursive_replies(parent_reply) -%}
+        {% for reply in parent_reply.replies %}
+        <div class="reply-block">
+            <div>
+                <p class="reply-author">
+                    {{reply.author.username}}
+                    <span class="separator side">•</span>
+                    <span class="side">{{reply.created}}</span>
+                </p>
+                <p class="reply-body">{{reply.content}}</p>
+                <div class="reply-options">
+                    <form action="{{post.title}}" method="POST">
+                        <button class="bubble" type="submit" name="like-btn" value="{{reply.id}}">
+                            <span>Like</span>
+                            <span>{{reply.likes}}</span>
+                        </button>
+                    </form>
+                    <form action="{{post.title}}" method="POST">
+                        <button class="bubble" type="submit" name="dislike-btn" value="{{reply.id}}">
+                            <span>Dislike</span>
+                            <span>{{reply.dislikes}}</span>
+                        </button>
+                    </form>
+                    <div>
+                        {% if SESSION.current_user_id is not none %}
+                        <button class="bubble add-reply" value="{{reply.id}}">Add a Reply</button>
+                        {% endif %}
+                    </div>
+                    {% if SESSION.current_user_id is not none %}
+                    {% if reply.authored_by(SESSION.current_user_id) %}
+                    <div class="reply-left-bar">
+                        <button class="bubble warn edit" type="submit" name="edit" value="{{reply.id}}" original="{{reply.content}}">
+                            <span>Edit</span>
+                        </button>
+                    </div>
+                    <form action="{{post.title}}" method="POST">
+                        <button class="bubble danger" type="submit" name="delete" value="{{reply.id}}">
+                            <span>Delete</span>
+                        </button>
+                    </form>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            {% if post.replies | length %}
+            {{ recursive_replies(reply) }}
+            {% endif %}
+        </div>
+        {% endfor %}
+        {%- endmacro %}
+
+        {{ recursive_replies(post) }}
+    </div>
+    <div>
+        
+    </div>
+</div>
+
+<div class="modal fade" id="reply-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add A Reply</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{post.title}}" method="POST">
+                <div class="modal-body">
+                    <textarea rows="5" name="reply-body"></textarea>
+                </div>
+                <input id="reply-parent" name="reply-parent" hidden value="">
+                <div class="modal-footer">
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" name="reply-btn" value="True">Reply</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{post.title}}" method="POST">
+                <div class="modal-body">
+                    <textarea rows="5" id="edit-body" name="edit-body"></textarea>
+                </div>
+                <input id="edit-id" name="edit-id" hidden value="">
+                <div class="modal-footer">
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" name="edit-btn" value="True">Edit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Initialize constants including the modal and the reply parent input container.
+    const REPLY_MODAL  = new bootstrap.Modal(document.getElementById("reply-modal"))
+    const REPLY_PARENT = document.getElementById("reply-parent")
+
+    // Do the same for the editing modal
+    const EDIT_MODAL   = new bootstrap.Modal(document.getElementById("edit-modal"))
+    const EDIT_ID      = document.getElementById("edit-id")
+    const EDIT_CONTENT = document.getElementById("edit-body")
+
+    /*
+     * For every add-reply button in the document: main-
+     * reply OR sub-reply, attach an event listener that
+     * shows the modal and updates the parent value when
+     * the button is clicked.
+     */
+    Array.from(document.getElementsByClassName("add-reply")).forEach(btn => 
+        btn.addEventListener("click", () => {
+            REPLY_MODAL.show()
+            REPLY_PARENT.value = btn.value
+        })
+    )
+
+    Array.from(document.getElementsByClassName("edit")).forEach(btn => {
+        btn.addEventListener("click", () => {
+            EDIT_MODAL.show()
+            EDIT_ID.value = btn.value
+            EDIT_CONTENT.value = btn.getAttribute("original")
+        })
+    })
+
+    /*
+     * Wipe the window state to prevent accidental
+     * resubmission of items when the user reloads.
+     */
+    if (window.history.replaceState)
+        window.history.replaceState(null, null, window.location.href)
+</script>
+{% endblock %}

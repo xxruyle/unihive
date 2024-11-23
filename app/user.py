@@ -56,7 +56,25 @@ class User:
             """,
             (self.id,)
         )]
-    
+
+    @staticmethod
+    def get_user_by_id(id: int):
+        """
+        Get a user by its database id.
+        Return None if user not found.
+        """
+
+        params = query(
+            """
+                SELECT id, username FROM users
+                WHERE id = ?;
+            """,
+            (id,),
+            count = 1
+        )
+        if not params: return None # User not found
+        return User(*params)       # Construct User object
+
     @staticmethod
     def get_user_by_username(username: str):
         """

@@ -19,11 +19,14 @@ from flask import (Flask, flash, redirect, render_template, request,
 from session import *
 from university import *
 from user import *
+from post import *
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = 'app/static'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'pdf'}
+
+DEVELOPMENT = False
 
 app = Flask(__name__) # initialize flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # flask app secret key required for form requests
@@ -110,7 +113,7 @@ def login():
             count=1
         )
         
-        if user_data and check_password_hash(user_data[1], password):
+        if user_data and (DEVELOPMENT or check_password_hash(user_data[1], password)):
             # Set the session user ID
             SESSION.current_user_id = user_data[0]
             USERS[user_data[0]] = User(user_data[0], username) # NOTE: need to store existing user data locally 
@@ -167,7 +170,10 @@ def register():
         # Create new user
         try:
             # Hash the password before storing
-            hashed_password = generate_password_hash(password)
+            if not DEVELOPMENT:
+                hashed_password = generate_password_hash(password)
+            else:
+                hashed_password = ''
             
             # Insert new user into database
             query(
@@ -426,6 +432,93 @@ def download(filename, coursename):
     """
     return download_syllabus(filename, coursename) 
 
+@app.route("/u/<university_acro>/<course_name>/<post_identifier>", methods=['GET', 'POST'])
+def post(university_acro=None, course_name=None, post_identifier=None):
+
+    # Get the university and course of the post. Its okay if
+    # these become None since the post getter does not care.
+    university = University.get_university_by_acronym(university_acro)
+    course     = Course.get_course_by_name_combined(university, course_name)
+
+    # Get the post object by title.
+    post = Post.get_post_by_title(post_identifier, course)
+
+    # Couldn't get post by title, try ID instead.
+    if post is None:
+        post = Post.get_post_by_id(post_identifier)
+
+    # 404 if the post wasn't found.
+    if post is None:
+        return render_template("404.html"), 404
+    
+    # If the user is preforming an action
+    if request.method == "POST":
+        # Get the user by their session ID
+        user = User.get_user_by_id(SESSION.current_user_id)
+       
+       # If the user exists preform the following
+        if user is not None:
+
+            # User has liked a post/reply, retrieve
+            # the post/reply and add a like to it.
+            if request.form.get("like-btn"):
+                liked_post = Post.get_post_by_id(int(request.form.get("like-btn")))
+                liked_post.toggle_like(user)
+            
+            # User has disliked a post/reply, retrieve
+            # the post/reply and add a dislike to it.
+            if request.form.get("dislike-btn"):
+                disliked_post = Post.get_post_by_id(int(request.form.get("dislike-btn")))
+                disliked_post.toggle_dislike(user)
+
+            # User has replied to a post/reply, retrieve
+            # the post/reply and add the new reply to it.
+            if request.form.get("reply-parent"):
+                replied_post = Post.get_post_by_id(int(request.form.get("reply-parent")))
+                replied_post.add_reply(user, request.form.get("reply-body"))
+
+            # User has edited a post / reply
+            if request.form.get("edit-id"):
+                edited_post = Post.get_post_by_id(int(request.form.get("edit-id")))
+
+                # The editor is not the owner of the post.
+                if not edited_post.authored_by(user):
+                    flash("Nice try.")
+                    return 403
+
+                edited_post.edit(request.form.get("edit-body")) # Apply the edit.
+
+                # Update post object if not reply.
+                if not edited_post.is_reply:
+                    post = edited_post
+
+            # User has deleted a post / reply
+            if request.form.get("delete"):
+                delete_post = Post.get_post_by_id(int(request.form.get("delete")))
+
+                # The deleter is not the owner of the post.
+                if not delete_post.authored_by(user):
+                    flash("Nice try.")
+                    return 403
+                
+                # Store if the deleted post was a reply.
+                is_reply = delete_post.is_reply
+
+                delete_post.delete() # Apply the deletion.
+
+                # Return user to course page if post isn't reply.
+                if not is_reply:
+                    return redirect(url_for('course', university_acro=university_acro, course=course_name))
+
+        
+        else:
+            # Otherwise, the user is not logged in so inform them.
+            flash("Must be logged in to preform this action.")
+            return render_template("login.html")
+
+
+    # Return the post HTML template.
+    return render_template("post.html", post=post)
 
 def main(): 
     '''
