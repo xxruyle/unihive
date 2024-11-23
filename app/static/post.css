@@ -1,153 +1,177 @@
+/*Edited post.css*/
+
+/* Typography and Reset */
 h1, h2, h3, h4, h5, p {
     margin: 0;
+    color: var(--text-color);
+    font-family: 'Roboto', sans-serif;
 }
 
+/* Post Card */
 #post-card {
     margin-top: -2rem;
     padding-bottom: 1.5em;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px var(--card-shadow);
+    background-color: var(--card-bg-color);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
 }
 
-.card.padded {
-    padding: 1em;
+#post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px var(--card-shadow);
 }
 
+/* Profile Picture */
 .profile-picture {
     max-width: 4em;
     max-height: 4em;
+    border-radius: 50%;
+    border: 2px solid var(--secondary-color);
 }
 
-.source {
-    font-size: 1.1em;
-}
-
+/* Author and Date Info */
 .author {
     font-size: 1.1em;
-    color: black;
+    color: var(--primary-color);
 }
 
 .date {
     font-size: 0.9em;
-    margin-top: 0.1em;
-    margin-bottom: 0.4em;
-    color: gray;
+    margin: 0.1em 0 0.4em 0;
+    color: var(--secondary-color);
 }
 
 #author-box {
     margin-bottom: 0.4em;
 }
 
-.side {
-    color: gray;
-}
-
+/* Vertical Centering */
 .vertical-center {
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
+/* Divider */
 hr {
     margin: 1em 0;
+    border: none;
+    border-top: 1px solid var(--secondary-color);
 }
 
+/* Post Content */
 #post-title {
-    margin-top: 0em;
+    margin-top: 0;
+    color: var(--text-color);
+    font-weight: bold;
 }
 
 #post-content {
     margin-top: 0.5em;
+    color: var(--text-color);
+    line-height: 1.6;
 }
 
+/* Info Card */
 #info-card {
     margin-top: 0.5em;
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
     padding: 0.75em;
+    background-color: var(--card-bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px var(--card-shadow);
 }
 
-#info-card > div:first-child {
-    display: flex;
-    flex-direction: row;
-}
-
+/* Bubble Styles */
 .bubble {
     background: none;
-    border-radius: 100vw;
-    border: 1px solid rgba(0,0,0,0.5);
+    border-radius: 50px;
+    border: 1px solid var(--secondary-color);
     padding: 0.05em 0.75em;
     margin-right: 0.5em;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
-div:last-child > .bubble {
-    margin-right: 0
+.bubble:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+    cursor: pointer;
 }
 
 button.bubble {
     cursor: pointer;
 }
 
+.bubble.danger {
+    border-color: darkred;
+    color: darkred;
+}
+
+/* Reply Card */
 #reply-card {
     margin-top: 1.5em;
 }
 
-
-
-
-
+/* Modal Styles */
 .modal-body textarea {
     width: 100%;
     padding: 0.5em;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--secondary-color);
 }
 
 .modal-footer {
-    display: block;
-}
-
-.modal-footer > div {
-    margin-left: auto;
-    width: max-content;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5em;
 }
 
 .modal-footer button {
-    background-color: gray;
-    margin-left: 0.5em;
+    background-color: var(--secondary-color);
+    color: #fff;
+    padding: 0.5em 1em;
+    border: none;
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition-speed);
+}
+
+.modal-footer button:hover {
+    background-color: var(--primary-color);
 }
 
 .modal-footer button:last-child {
-    background-color: #1d64c1;
+    background-color: var(--primary-color);
 }
 
-
+/* Replies */
 .reply-block {
     padding: 0em 0 0em 0.75em;
-    margin: 0.5em 0 0.5em 0em;
-    border-left: 1px solid rgba(0, 0, 0, 0.25);
+    margin: 0.5em 0;
+    border-left: 1px solid var(--secondary-color);
 }
 
-.reply-block:last-child {
-    margin-bottom: 0;
-}
-
-.reply-author {
-    color: gray;
+.reply-author, .add-sub-reply {
+    color: var(--secondary-color);
 }
 
 .add-sub-reply {
-    color: gray;
-    border: 1px solid gray;
-    border-radius: 100vw;
-    cursor: pointer;
-    background: none;
+    border: 1px solid var(--secondary-color);
+    border-radius: 50px;
     padding: 0.1em 0.6em;
     font-size: 0.75em;
     margin-left: -0.25em;
+    background: none;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
-#reply-header {
-    margin-bottom: 0.25em;
+.add-sub-reply:hover {
+    background-color: var(--primary-color);
+    color: #fff;
 }
 
+/* Reply Options */
 .reply-options {
     display: flex;
     margin-left: -0.1em;
@@ -160,34 +184,20 @@ button.bubble {
     margin-right: 0.25em;
 }
 
+/* Side Notes */
 .side {
     font-style: italic;
     font-size: 0.9em;
     color: rgba(0, 0, 0, 0.25);
 }
 
+/* Separator */
 .separator {
-    margin-left: 0.25em;
-    margin-right: 0.25em;
+    margin: 0 0.25em;
 }
 
-.reply-body {
-    margin: 0.3em 0;
-}
-
-.bubble.danger {
-    border-color: darkred;
-    color: darkred;
-}
-
-.post-left-bar {
-    margin-left: 0.25em;
+/* Post and Reply Bars */
+.post-left-bar, .reply-left-bar {
     padding-left: 0.75em;
-    border-left: 1px solid rgba(0, 0, 0, 0.5);
-}
-
-.reply-left-bar {
-    margin-left: 0.5em;
-    padding-left: 0.75em;
-    border-left: 1px solid rgba(0, 0, 0, 0.5);
+    border-left: 1px solid var(--secondary-color);
 }

@@ -1,5 +1,171 @@
+/*Author of updated css code- Victor*/
+/* Theme Variables */
+:root {
+    --background-color: #f5f7fa;
+    --text-color: #2c3e50;
+    --primary-color: #3498db;
+    --secondary-color: #95a5a6;
+    --accent-color: #e74c3c;
+    --card-bg-color: #ffffff;
+    --card-shadow: rgba(0, 0, 0, 0.1);
+    --link-hover-bg: #ecf0f1;
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+}
+
+[data-theme="dark"] {
+    --background-color: #1e1e2e;
+    --text-color: #ecf0f1;
+    --primary-color: #2980b9;
+    --secondary-color: #7f8c8d;
+    --accent-color: #c0392b;
+    --card-bg-color: #2c3e50;
+    --card-shadow: rgba(255, 255, 255, 0.1);
+    --link-hover-bg: #34495e;
+}
+
+/* Global Reset */
 * {
-    font-family: "PT Serif", serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: "Roboto", serif;
+    line-height: 1.6;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 6px var(--card-shadow);
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    margin-right: 1rem;
+    transition: color var(--transition-speed);
+}
+
+.navbar a:hover {
+    color: var(--accent-color);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    background-color: var(--card-bg-color);
+    color: var(--text-color);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px var(--card-shadow);
+}
+
+.sidebar a {
+    display: block;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.sidebar a:hover {
+    background-color: var(--link-hover-bg);
+    color: var(--primary-color);
+}
+
+/* Card Styles */
+.card {
+    background-color: var(--card-bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px var(--card-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px var(--card-shadow);
+}
+
+/* Button Styles */
+.btn {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition-speed), transform var(--transition-speed);
+}
+
+.btn:hover {
+    background-color: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary-color);
+}
+
+/* Form Styles */
+input, textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--secondary-color);
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    transition: border-color var(--transition-speed), background-color var(--transition-speed);
+}
+
+input:focus, textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    background-color: var(--link-hover-bg);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+/* Utility Classes */
+.mt-5 {
+    margin-top: 3rem;
+}
+
+.pb-5 {
+    padding-bottom: 3rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/*Updated code above*/
+
+
+* {
+    font-family: "Roboto", serif;
 }
 
 /* Sidebar Styles */
@@ -220,6 +386,30 @@ a.big-link:hover {
 
 .pt-serif-bold-italic {
     font-family: "PT Serif", serif;
+    font-weight: 700;
+    font-style: italic;
+}
+
+.roboto-regular {
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.roboto-bold {
+    font-family: "Roboto", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+}
+
+.roboto-regular-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.roboto-bold-italic {
+    font-family: "Roboto", sans-serif;
     font-weight: 700;
     font-style: italic;
 }
