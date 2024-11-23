@@ -63,6 +63,40 @@ class Post:
             count = 1
         )[0]
     
+    @property
+    def is_reply(self):
+        """Is post or reply getter."""
+        return query(
+            """
+                SELECT is_reply FROM posts
+                WHERE id = ?
+            """,
+            (self.id,),
+            count = 1
+        )[0]
+    
+    def edit(self, new_content):
+        """Edit an existing post with the new content."""
+        query(
+            """
+                UPDATE posts SET content = ?
+                WHERE id = ?;
+            """,
+            (new_content, self.id)
+        )
+        self.content = new_content
+
+    def delete(self):
+        """Delete calling post from the database."""
+        query(
+            """DELETE FROM posts WHERE id = ?""",
+            (self.id,)
+        )
+    
+    def authored_by(self, user):
+        """Simply return if user is the author."""
+        return self.author.id == (user if type(user) is int else user.id)
+    
     def liked_by(self, user: User):
         """
         Return if the calling user liked the given post.

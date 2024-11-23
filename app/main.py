@@ -170,7 +170,10 @@ def register():
         # Create new user
         try:
             # Hash the password before storing
-            hashed_password = generate_password_hash(password)
+            if not DEVELOPMENT:
+                hashed_password = generate_password_hash(password)
+            else:
+                hashed_password = ''
             
             # Insert new user into database
             query(
@@ -448,22 +451,70 @@ def post(university_acro=None, course_name=None, post_identifier=None):
     if post is None:
         return render_template("404.html"), 404
     
+    # If the user is preforming an action
     if request.method == "POST":
+        # Get the user by their session ID
         user = User.get_user_by_id(SESSION.current_user_id)
        
+       # If the user exists preform the following
         if user is not None:
-            if request.form.get("like-btn"):
-                post.toggle_like(user)
-            
-            if request.form.get("dislike-btn"):
-                post.toggle_dislike(user)
 
+            # User has liked a post/reply, retrieve
+            # the post/reply and add a like to it.
+            if request.form.get("like-btn"):
+                liked_post = Post.get_post_by_id(int(request.form.get("like-btn")))
+                liked_post.toggle_like(user)
+            
+            # User has disliked a post/reply, retrieve
+            # the post/reply and add a dislike to it.
+            if request.form.get("dislike-btn"):
+                disliked_post = Post.get_post_by_id(int(request.form.get("dislike-btn")))
+                disliked_post.toggle_dislike(user)
+
+            # User has replied to a post/reply, retrieve
+            # the post/reply and add the new reply to it.
             if request.form.get("reply-parent"):
                 replied_post = Post.get_post_by_id(int(request.form.get("reply-parent")))
                 replied_post.add_reply(user, request.form.get("reply-body"))
+
+            # User has edited a post / reply
+            if request.form.get("edit-id"):
+                edited_post = Post.get_post_by_id(int(request.form.get("edit-id")))
+
+                # The editor is not the owner of the post.
+                if not edited_post.authored_by(user):
+                    flash("Nice try.")
+                    return 403
+
+                edited_post.edit(request.form.get("edit-body")) # Apply the edit.
+
+                # Update post object if not reply.
+                if not edited_post.is_reply:
+                    post = edited_post
+
+            # User has deleted a post / reply
+            if request.form.get("delete"):
+                delete_post = Post.get_post_by_id(int(request.form.get("delete")))
+
+                # The deleter is not the owner of the post.
+                if not delete_post.authored_by(user):
+                    flash("Nice try.")
+                    return 403
+                
+                # Store if the deleted post was a reply.
+                is_reply = delete_post.is_reply
+
+                delete_post.delete() # Apply the deletion.
+
+                # Return user to course page if post isn't reply.
+                if not is_reply:
+                    return redirect(url_for('course', university_acro=university_acro, course=course_name))
+
         
-        flash("Must be logged in to preform this action.")
-        return render_template("login.html")
+        else:
+            # Otherwise, the user is not logged in so inform them.
+            flash("Must be logged in to preform this action.")
+            return render_template("login.html")
 
 
     # Return the post HTML template.
