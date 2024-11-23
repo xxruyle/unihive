@@ -8,9 +8,10 @@
 import datetime
 
 from course import Course
-from university import University
 from db import query
+from university import University
 from user import User
+
 
 class Post: 
     def __init__(self, id, created, title, content, author, course_id): 
@@ -42,7 +43,8 @@ class Post:
     @property
     def likes(self):
         """Post like count getter."""
-        return query(
+
+        num_likes = query(
             """
                 SELECT COUNT(*) FROM user_post_likes 
                 WHERE is_like = TRUE AND post = ?;
@@ -50,6 +52,54 @@ class Post:
             (self.id,),
             count = 1
         )[0]
+
+
+        # quick hack for adding likes to a post in the posts table 
+        # TODO: this sucks :/
+        query(
+            """
+            UPDATE posts 
+            SET likes = ?
+            WHERE id = ?
+            """,
+            (num_likes, self.id)
+        )
+
+        # Another quick hack for updating course popularity score lol
+        # TODO: this sucks :/
+        popularity_score = query(
+            """
+                SELECT COUNT(*) FROM courses 
+                WHERE id = ?;
+            """,
+            (self.course.id,)
+        )[0][0]
+
+        # BUG: User could just keep liking and unliking to boost popularity_score
+        query(
+            """
+            UPDATE courses 
+            SET popularity_score = ?
+            WHERE id = ?
+            """,
+            (popularity_score+1, self.id)
+        )
+
+        # DEBUG: can remove 
+        # print(query(
+        #     """
+        #     select * FROM courses
+        #     WHERE id = ?
+        #     """,
+        #     (self.course.id, )))
+        # print(query(
+        #     """
+        #     select * FROM posts 
+        #     WHERE id = ?
+        #     """,
+        #     (self.id, )))
+
+        return num_likes
 
     @property
     def dislikes(self):

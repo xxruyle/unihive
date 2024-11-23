@@ -135,7 +135,7 @@ def get_posts_user_recent():
 
     # kind of bad but it works 
     # uses slicing to get recent posts
-    print(posts) 
+    # print(posts) 
     if len(posts) > 4: 
         return posts[:3]
     else: 
@@ -237,6 +237,10 @@ def sort_courses(sort_type : str, university: University):
         university.sort_course_type = "created" 
     elif sort_type == "Department": 
         university.sort_course_type = "name" 
+    elif sort_type == "Popularity": 
+        university.sort_course_type = "popularity_score" 
+    elif sort_type == "Credit Hours": 
+        university.sort_course_type = "hours" 
 
 def sort_posts(sort_type : str, course: Course): 
     """
@@ -247,9 +251,9 @@ def sort_posts(sort_type : str, course: Course):
     :param university: The university object.
     """
     if sort_type == "Date Created": 
-        course.sort_post_type = "Date Created" 
+        course.sort_post_type = "created" 
     elif sort_type == "Popularity": 
-        course.sort_post_type = "Popularity" 
+        course.sort_post_type = "likes" 
 
 ################################################################################
 

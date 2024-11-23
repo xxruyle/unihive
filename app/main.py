@@ -16,10 +16,10 @@ from db import connection  # your existing database connection
 from db_util import *
 from flask import (Flask, flash, redirect, render_template, request,
                    send_from_directory, session, url_for)
+from post import *
 from session import *
 from university import *
 from user import *
-from post import *
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 

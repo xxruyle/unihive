@@ -32,7 +32,7 @@ $ python3 app/main.py
 
 ## Tech Stack 
 - Flask 
-- Postgre SQL
+- Sqlite
 - Bootstrap 
 
 

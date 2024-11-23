@@ -24,9 +24,11 @@ class Course:
         self.department     = Department.get_department_by_id(department_id) # Department
         self.university     = University.get_university_by_id(university_id) # University
 
+        # self.likes = self.get_num_likes(self.id)
+
         # Full name, Ex: EECS-581
         self.name_combined = self.department.name + "-" + str(self.course_number)
-        self.sort_post_type = "Date Created" # default sort type 
+        self.sort_post_type = "created" # default sort type 
 
     @property
     def posts(self):
@@ -38,16 +40,12 @@ class Course:
         # Avoid circular import.
         from post import Post
 
-        if self.sort_post_type == "Date Created":
-            sort_by = "created"   
-        else: 
-            sort_by = "created" 
-
         query_str = f"""
                 SELECT id, created, title, content, author, course FROM posts
                 WHERE course = ? AND parent IS NULL
-                ORDER BY {sort_by};
+                ORDER BY {self.sort_post_type} DESC;
             """
+
 
         # Return a list of all posts that aren't replies.
         return [Post(*params) for params in query(
@@ -133,7 +131,18 @@ class Course:
 
         # Get the mode of credit_hours. Presumably,
         # the mode will be the "correct" value.
-        return max(hour_table, key = lambda x: hour_table[x])
+        new_hours = max(hour_table, key = lambda x: hour_table[x])
+        query(
+            """
+            UPDATE courses 
+            SET hours = ?
+            WHERE id = ?
+            """,
+            (new_hours, self.id)
+        )
+
+
+        return new_hours
 
     @property
     def instructors(self) -> list[str]:
@@ -253,6 +262,8 @@ class Course:
         )
         if not params: return None # Course not found
         return Course(*params)     # Construct course object
+
+
 
     def store_info(self, user: 'User', difficulty: float = None, grade: 'Grade' = None, credit_hours: int = None, instructor: str = None):
         """

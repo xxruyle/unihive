@@ -132,7 +132,8 @@ def create_tables():
             course_number VARCHAR,
             department    INTEGER,
             hours         INTEGER,
-            university    INTEGER NOT NULL
+            university    INTEGER NOT NULL,
+            popularity_score INTEGER DEFAULT 0 
         );
         """,
         """
