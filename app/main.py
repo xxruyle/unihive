@@ -19,11 +19,14 @@ from flask import (Flask, flash, redirect, render_template, request,
 from session import *
 from university import *
 from user import *
+from post import *
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = 'app/static'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'pdf'}
+
+DEVELOPMENT = False
 
 app = Flask(__name__) # initialize flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # flask app secret key required for form requests
@@ -110,7 +113,7 @@ def login():
             count=1
         )
         
-        if user_data and check_password_hash(user_data[1], password):
+        if user_data and (DEVELOPMENT or check_password_hash(user_data[1], password)):
             # Set the session user ID
             SESSION.current_user_id = user_data[0]
             USERS[user_data[0]] = User(user_data[0], username) # NOTE: need to store existing user data locally 
@@ -426,6 +429,45 @@ def download(filename, coursename):
     """
     return download_syllabus(filename, coursename) 
 
+@app.route("/u/<university_acro>/<course_name>/<post_identifier>", methods=['GET', 'POST'])
+def post(university_acro=None, course_name=None, post_identifier=None):
+
+    # Get the university and course of the post. Its okay if
+    # these become None since the post getter does not care.
+    university = University.get_university_by_acronym(university_acro)
+    course     = Course.get_course_by_name_combined(university, course_name)
+
+    # Get the post object by title.
+    post = Post.get_post_by_title(post_identifier, course)
+
+    # Couldn't get post by title, try ID instead.
+    if post is None:
+        post = Post.get_post_by_id(post_identifier)
+
+    # 404 if the post wasn't found.
+    if post is None:
+        return render_template("404.html"), 404
+    
+    if request.method == "POST":
+        user = User.get_user_by_id(SESSION.current_user_id)
+       
+        if user is not None:
+            if request.form.get("like-btn"):
+                post.toggle_like(user)
+            
+            if request.form.get("dislike-btn"):
+                post.toggle_dislike(user)
+
+            if request.form.get("reply-parent"):
+                replied_post = Post.get_post_by_id(int(request.form.get("reply-parent")))
+                replied_post.add_reply(user, request.form.get("reply-body"))
+        
+        flash("Must be logged in to preform this action.")
+        return render_template("login.html")
+
+
+    # Return the post HTML template.
+    return render_template("post.html", post=post)
 
 def main(): 
     '''

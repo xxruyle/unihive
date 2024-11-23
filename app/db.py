@@ -87,7 +87,8 @@ def create_tables():
             created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
             is_like BOOL DEFAULT TRUE,
             user    INTEGER NOT NULL,
-            post    INTEGER NOT NULL
+            post    INTEGER NOT NULL,
+            UNIQUE(user, post) ON CONFLICT REPLACE
         );
         """,
         """

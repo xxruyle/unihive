@@ -126,7 +126,7 @@ h5 {
 .horizontal {
     display: flex;
     flex-wrap: wrap;
-    gap: 2em;
+    gap: 1em;
 }
 
 .horizontal>div {
@@ -190,6 +190,15 @@ h5 {
     margin: 0;
 }
 
+a.big-link {
+    text-decoration: none;
+    display: block;
+    color: unset;
+}
+
+a.big-link:hover {
+    color: unset;
+}
 
 .pt-serif-regular {
     font-family: "PT Serif", serif;
