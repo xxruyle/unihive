@@ -9,9 +9,15 @@
 %} {% block content_subtitle %}{% endblock %} {% block content_main %} {% with
 messages = get_flashed_messages() %} {% if messages %}
 <ul class="flashes">
-  {% for message in messages %}
-  <div class="alert alert-danger" role="alert">{{ message }}</div>
-  {% endfor %}
+  {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        {% if category != 'login-register' %} {# Skip login success messages on this page #}
+          <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
 </ul>
 {% endif %} {% endwith %}
 

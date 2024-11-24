@@ -94,47 +94,61 @@ def login_required(f):
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    # If user is already logged in, redirect to home
+    # Redirect logged-in users to the home page
     if SESSION.current_user_id is not None:
         return redirect(url_for('home'))
-        
+    
     if request.method == "POST":
         username = request.form.get('username')
         password = request.form.get('password')
         
         if not username or not password:
-            flash("Please fill in all fields")
-            return redirect(url_for('login'))
-            
-        # Query the database for the user
-        user_data = query(
-            "SELECT id, password FROM users WHERE username = ?",
-            (username,),
-            count=1
-        )
+            flash("Please fill in all fields.", "login-register")
+            return render_template('auth/login.html')
         
-        if user_data and (DEVELOPMENT or check_password_hash(user_data[1], password)):
-            # Set the session user ID
-            SESSION.current_user_id = user_data[0]
-            USERS[user_data[0]] = User(user_data[0], username) # NOTE: need to store existing user data locally 
-            print(SESSION.current_user_id) 
-            
-            # Update last login timestamp
-            query(
-                "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?",
-                (user_data[0],)
+        try:
+            # Query the database for the user
+            user_data = query(
+                "SELECT id, password FROM users WHERE username = ?",
+                (username,),
+                count=1
             )
             
-            return redirect(url_for('home'))
-        else:
-            flash("Invalid username or password")
-            return redirect(url_for('login'))
-            
+            # Verify user credentials
+            if user_data and (DEVELOPMENT or check_password_hash(user_data[1], password)):
+                # Set the session user ID and store user in USERS
+                SESSION.current_user_id = user_data[0]
+                USERS[user_data[0]] = User(user_data[0], username)
+                print(f"User {username} logged in successfully.")
+                
+                # Update last login timestamp
+                query(
+                    "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?",
+                    (user_data[0],)
+                )
+                
+                flash("Login successful. Welcome back!", "login-register")
+                return redirect(url_for('home'))
+            else:
+                # Log failed attempt and return generic error
+                print(f"Failed login attempt for username: {username}")
+                flash("Invalid username or password.", "login-register")
+                return render_template('auth/login.html')
+        
+        except Exception as e:
+            print(f"Login error: {e}")
+            flash("An error occurred. Please try again later.", "login-register")
+            return render_template('auth/login.html')
+    
     return render_template('auth/login.html')
+
 
 @app.route("/logout")
 def logout():
     SESSION.current_user_id = None
+    if '_flashes' in session:
+        del session['_flashes']
+    
     flash("You have been logged out")
     return redirect(url_for('login'))
 
@@ -145,37 +159,38 @@ def register():
         username = request.form.get('username')
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
-        
+
         # Basic validation
         if not username or not password or not confirm_password:
             flash('All fields are required.', 'error')
             return render_template('auth/register.html')
-            
+
         if password != confirm_password:
             flash('Passwords do not match.', 'error')
             return render_template('auth/register.html')
-            
+
         # Check if username already exists
-        existing_user = query(
-            "SELECT id FROM users WHERE username = ?",
-            (username,),
-            count=1
-        )
-        
-        if existing_user:
-            USERS[existing_user[0]] = User(existing_user[0], username) # need to insert into local USERS still 
-            flash('Username already exists.', 'error')
+        try:
+            existing_user = query(
+                "SELECT id FROM users WHERE username = ?",
+                (username,),
+                count=1
+            )
+
+            if existing_user:
+                flash(f"The username '{username}' is already taken. Please choose a different one.", 'login-register')
+                return render_template('auth/register.html')
+        except Exception as e:
+            print(f"Error checking username existence: {e}")
+            flash('An error occurred during registration.', 'login-register')
             return render_template('auth/register.html')
-            
+
         # Create new user
         try:
             # Hash the password before storing
-            if not DEVELOPMENT:
-                hashed_password = generate_password_hash(password)
-            else:
-                hashed_password = ''
-            
-            # Insert new user into database
+            hashed_password = generate_password_hash(password)
+
+            # Insert new user into the database
             query(
                 """
                 INSERT INTO users (username, password)
@@ -183,31 +198,30 @@ def register():
                 """,
                 (username, hashed_password)
             )
-            
+
             # Get the newly created user
             new_user = query(
                 "SELECT id, username FROM users WHERE username = ?",
                 (username,),
                 count=1
             )
-            
+
             if new_user:
-                # Update the session with the new user
+                # Update session and USERS dictionary
                 SESSION.current_user_id = new_user[0]
                 USERS[new_user[0]] = User(new_user[0], username)
 
-                print(SESSION.current_user_id) 
-                
                 flash('Registration successful! Welcome to UniHive!', 'success')
                 return redirect(url_for('home'))
-            
+
         except Exception as e:
             print(f"Registration error: {e}")
-            flash('An error occurred during registration.', 'error')
+            flash('An error occurred while creating your account.', 'error')
             return render_template('auth/register.html')
-    
-    # If GET request, just show the registration form
+
+    # If GET request, render registration form
     return render_template('auth/register.html')
+
 
 
 @app.route("/profile", methods = ["GET", "POST"])

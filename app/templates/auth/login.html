@@ -1,7 +1,7 @@
 <!-- Filename: login.html -->
 <!-- Description: This renders the form to login to an existing profile-->
 <!-- Inputs: -->
-<!-- Output:  -->
+<!-- Output: -->
 <!-- Authors: ElliaMorse -->
 <!-- Creation Date: 11/10/2024 -->
 
@@ -16,16 +16,18 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    {% with messages = get_flashed_messages() %}
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=True) %}
                         {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert alert-danger" role="alert">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}" role="alert">
                                     {{ message }}
                                 </div>
                             {% endfor %}
                         {% endif %}
                     {% endwith %}
                     
+                    <!-- Login Form -->
                     <form method="POST" action="{{ url_for('login') }}">
                         <div class="form-group mb-3">
                             <label for="username">Username</label>

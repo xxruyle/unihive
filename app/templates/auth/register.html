@@ -1,7 +1,7 @@
 <!-- Filename: register.html -->
 <!-- Description: This renders the form to login and create a profile-->
 <!-- Inputs: -->
-<!-- Output:  -->
+<!-- Output: -->
 <!-- Authors: ElliaMorse -->
 <!-- Creation Date: 11/10/2024 -->
 
@@ -17,6 +17,30 @@
             <div class="card">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Register</h2>
+
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=True) %}
+                        {% if messages %}
+                            <div class="alert-container">
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }}" role="alert">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <!-- Ensure messages are cleared after rendering -->
+                            <script>
+                                // Clear flash messages to prevent re-display
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    const alertContainer = document.querySelector('.alert-container');
+                                    if (alertContainer) {
+                                        setTimeout(() => alertContainer.remove(), 5000); // Remove after 5 seconds
+                                    }
+                                });
+                            </script>
+                        {% endif %}
+                    {% endwith %}
+
                     <form method="POST" action="{{ url_for('register') }}">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
