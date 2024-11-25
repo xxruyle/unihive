@@ -1,12 +1,13 @@
-<!-- Filename: home.html -->
-<!-- Description: This html file shows the home page of the app -->
+<!-- Filename: search_course.html -->
+<!-- Description: This html file shows the search results of courses for a given user query -->
 <!-- Inputs: base.html -->
 <!-- Output:  -->
 <!-- Authors: Xavier Ruyle -->
-<!-- Creation Date: 10/24/2024 -->
+<!-- Creation Date: 11/25/2024 -->
 
-{% extends 'base.html' %} {% block content_title %}Home{% endblock %} {% block
-content_subtitle %}Search Universities{% endblock %} {% block content_main %}
+{% extends 'base.html' %} {% block content_title %}Search Courses in
+{{university.acronym}} {% endblock %} {% block content_subtitle %}Course Search
+Results{% endblock %} {% block content_main %}
 <!--   <div class="card mb-4"> -->
 <!--     <div class="card-body"> -->
 <!--         <div class="d-flex align-items-center mb-3"> -->
@@ -24,5 +25,18 @@ content_subtitle %}Search Universities{% endblock %} {% block content_main %}
 <!--         </div> -->
 <!--     </div> -->
 <!-- </div> -->
+{% if courses is none %}
+<p>No search results for <i>{{search_content}}</i>...</p>
+{% else %}
+<div class="list-group">
+  {% for course in courses %}
 
-{% endblock %}
+  <a
+    href="{{url_for('course', university_acro=university.acronym, course=course.name_combined)}}"
+    class="list-group-item list-group-item-action"
+    >{{course.name_combined}} - {{course.name}}</a
+  >
+
+  {% endfor %}
+</div>
+{% endif %} {% endblock %}

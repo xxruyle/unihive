@@ -47,6 +47,7 @@
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('home') }}">Home</a>
               </li>
+
               <li class="nav-item">
                 <a class="nav-link" href="#">Universities</a>
               </li>
@@ -56,7 +57,9 @@
 
         <!-- Right side - Profile/Login -->
         <div class="d-flex align-items-center">
-          <button id="theme-toggle" class="btn btn-outline-light btn-sm me-2">Switch to Dark Mode</button>
+          <button id="theme-toggle" class="btn btn-outline-light btn-sm me-2">
+            Switch to Dark Mode
+          </button>
           {% if SESSION.current_user_id %}
           <span class="text-light mr-3"
             >Logged in, {{ USERS[SESSION.current_user_id].username }}</span
@@ -174,7 +177,7 @@
         <h2 class="my-4 text-left">
           {% block content_subtitle %}{% endblock %}
         </h2>
-        {% block content_main %}{% endblock %}
+        {% block content_main %} {% endblock %}
       </div>
     </div>
 

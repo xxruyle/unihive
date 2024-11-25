@@ -92,6 +92,8 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     # Redirect logged-in users to the home page
@@ -280,6 +282,33 @@ def university(university_acro=None, university_name=None):
     # render university home page 
     return render_template('university_home.html', university = current_university)  
 
+@app.route("/search-university", methods=["GET", "POST"])
+def search_university(): 
+    '''
+    Used for searching a university 
+    '''
+    if request.method == "POST": 
+        search_content = request.form['search-content'] 
+        searched_universities = search_for_university(search_content)
+        if not searched_universities:  # placeholder if search did not query anything (bad?) 
+            searched_universities = None
+
+    return render_template("search_university.html", searched_universities=searched_universities, search_content=search_content)
+
+@app.route("/u/<university_acro>/search-course", methods=["GET", "POST"])
+def search_course(university_acro=None): 
+    '''
+    Used for searching for a course in a university  
+    '''
+    if request.method == "POST": 
+        search_content = request.form['search-content'] 
+        searched_courses = search_for_course(search_content, university_acro)
+        print(searched_courses)
+        if not searched_courses: 
+            searched_courses = None 
+
+    return render_template("search_course.html", university=University.get_university_by_acronym(university_acro), search_content=search_content, courses=searched_courses)
+
 @app.route("/create-university", methods =["GET", "POST"])
 def create_university():
     '''
@@ -367,7 +396,7 @@ def course(university_acro=None, course=None):
                 # store the syllabus file into database
                 store_syllabus(stored_course.name_combined, filename, file.read()) 
                 # DEBUG (to make sure it was inserted into the db): 
-                print(query("SELECT coursename FROM syllabus;"))
+                # print(query("SELECT coursename FROM syllabus;"))
                 return redirect(url_for('course', university_acro=stored_university.acronym, course=stored_course.name_combined))
             else: 
                 flash("That file type is not allowed")
@@ -383,8 +412,8 @@ def course(university_acro=None, course=None):
     return render_template('course.html', course = stored_course)  # render course html 
 
 
-@app.route("/create-course", methods=["GET", "POST"])
-def create_course(university="placeholder"): 
+@app.route("/u/<university_acro>/create-course/", methods=["GET", "POST"])
+def create_course(university_acro=None, university="placeholder"): 
     '''
     Route function for create course page 
     Template Dependecies: followed universities, followed courses
@@ -392,9 +421,10 @@ def create_course(university="placeholder"):
     # detect post request 
     if request.method == "POST": 
         # handle create course info
-        university_acro = request.form.get('university').lower()
+        # university_acro = request.form.get('university').lower()
         department      = request.form.get('department').lower()
         course_number   = request.form.get('course-number').lower()
+        course_name   = request.form.get('course-name').lower()
 
         # Get the university using the supplied acronym
         stored_university = University.get_university_by_acronym(university_acro)
@@ -402,7 +432,7 @@ def create_course(university="placeholder"):
         # If the university doesn't exist, error out
         if stored_university is None:
             flash("University does not exist")
-            return render_template('create_course.html', uni=university)
+            return render_template('create_course.html', university_acro=university_acro, uni=university)
 
         # Get the requested department from the DB
         stored_department = Department.get_department_by_abbreviation(stored_university, department)
@@ -419,14 +449,14 @@ def create_course(university="placeholder"):
         # check if course exists
         if stored_course is None: 
             # TODO: course name should be a form option 
-            store_course("", course_number, stored_department) # STORE: Course obj
+            store_course(course_name, course_number, stored_department) # STORE: Course obj
             stored_course = Course.get_course_by_course_number(stored_university, stored_department, course_number)
 
             return redirect(url_for('course', university_acro=stored_university.acronym, course=stored_course.name_combined)) # redirect user to the course page 
         else: 
             flash("Course already exists", 'error') # Inform user that course exists
 
-    return render_template('create_course.html', uni=university)  # render create course page 
+    return render_template('create_course.html', university_acro=university_acro, uni=university)  # render create course page 
 
 @app.route("/user/<username>", methods=["GET", "POST"])
 def profile_page(username):
@@ -527,7 +557,7 @@ def post(university_acro=None, course_name=None, post_identifier=None):
         else:
             # Otherwise, the user is not logged in so inform them.
             flash("Must be logged in to preform this action.")
-            return render_template("login.html")
+            return render_template('auth/login.html')
 
 
     # Return the post HTML template.

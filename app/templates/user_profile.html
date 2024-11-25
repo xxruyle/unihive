@@ -138,26 +138,31 @@ block content_subtitle %}{% endblock %} {% block content_main %}
           <div class="sidebar-header">Recent Posts</div>
 
           {% for post in recent_posts %}
-          <div class="card mb-4">
-            <div class="card-body">
-              <div class="d-flex align-items-center mb-3">
-                <img
-                  src="https://via.placeholder.com/40"
-                  class="rounded-circle mr-2"
-                  alt="User"
-                />
-                <div class="px-3">
-                  <h6 class="mb-1">{{post.author}}</h6>
-                  <small class="text-muted">Posted on {{post.created}}</small>
+          <a
+            class="big-link"
+            href="{{url_for('post', university_acro=post.course.university.acronym, course_name=post.course.name_combined, post_identifier=post.id)}}"
+          >
+            <div class="card mb-4">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <img
+                    src="https://via.placeholder.com/40"
+                    class="rounded-circle mr-2"
+                    alt="User"
+                  />
+                  <div class="px-3">
+                    <h6 class="mb-1">{{post.author}}</h6>
+                    <small class="text-muted">Posted on {{post.created}}</small>
+                  </div>
                 </div>
+                <h5 class="card-title">{{post.title}}</h5>
+                <p class="card-text">{{post.content}}</p>
+                <a href="#" class="btn btn-primary"
+                  >Replies ({{post.replies | length}})</a
+                >
               </div>
-              <h5 class="card-title">{{post.title}}</h5>
-              <p class="card-text">{{post.content}}</p>
-              <a href="#" class="btn btn-primary"
-                >Replies ({{post.replies | length}})</a
-              >
             </div>
-          </div>
+          </a>
           {% endfor %}
         </div>
       </div>

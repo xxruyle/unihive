@@ -5,44 +5,62 @@
 <!-- Authors: Xavier Ruyle -->
 <!-- Creation Date: 10/24/2024 -->
 
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content_title %}Create Course for {{university_acro}}{% endblock %}
+{% block content_subtitle %}Course Information{% endblock %} {% block
+content_main %} {% with messages = get_flashed_messages() %} {% if messages %}
+<ul class="flashes">
+  {% for message in messages %}
+  <div class="alert alert-danger" role="alert">{{ message }}</div>
+  {% endfor %}
+</ul>
+{% endif %} {% endwith %}
 
-
-{% block content_title %}Create Course{% endblock %}
-{% block content_subtitle %}Course Creation Form{% endblock %}
-
-{% block content_main %}
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-    <div class="alert alert-danger" role="alert">
-        {{ message }}
-    </div>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-
-
-<form action="create-course" method="post">
-  <div class="form-group">
-    <label for="university">University Acronym</label>
-    <input type="text" class="form-control" name="university" for="university" id="university" placeholder="KU">
-  </div>
+<form action="{{create_course}}" method="post">
+  <!-- <div class="form-group"> -->
+  <!--   <label for="university">University Acronym</label> -->
+  <!--   <input -->
+  <!--     type="text" -->
+  <!--     class="form-control" -->
+  <!--     name="university" -->
+  <!--     for="university" -->
+  <!--     id="university" -->
+  <!--     placeholder="KU" -->
+  <!--   / required> -->
+  <!-- </div> -->
 
   <div class="form-group">
     <label for="department">Department</label>
-    <input type="text" class="form-control" name="department" id="department" placeholder="EECS">
+    <input
+      type="text"
+      class="form-control"
+      name="department"
+      id="department"
+      placeholder="EECS"
+    / required>
   </div>
 
   <div class="form-group">
     <label for="course-number">Course Number</label>
-    <input type="text" class="form-control" name="course-number" id="course-number" placeholder="581">
+    <input
+      type="text"
+      class="form-control"
+      name="course-number"
+      id="course-number"
+      placeholder="581"
+    / required>
   </div>
 
-<button type="submit" class="btn btn-primary">Submit</button>
+  <div class="form-group">
+    <label for="course-name">Course Name</label>
+    <input
+      type="text"
+      class="form-control"
+      name="course-name"
+      id="course-Name"
+      placeholder="Software Engineering II"
+    / required>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-  {% endblock %}
-
-
+{% endblock %}
