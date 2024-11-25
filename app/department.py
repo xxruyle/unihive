@@ -8,6 +8,7 @@
 from db import query
 from university import University
 
+
 class Department:
     def __init__(self, id, name, abbreviation, university_id):
         self.id           = id                                             # Database ID

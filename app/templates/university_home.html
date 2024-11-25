@@ -20,6 +20,14 @@ content_subtitle %}
     Follow
   </button>
 </form>
+
+<h3>Search Courses</h3>
+<form class="form-inline" action={{url_for('search_course', university_acro=university.acronym)}} method="POST">
+  <input class="form-control mr-sm-2" type="search" name="search-content" aria-label="Search" required/>
+  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+    Search
+  </button>
+</form>
 <br />
 Courses {% endblock %} {% block content_main %}
 
@@ -55,14 +63,14 @@ Courses {% endblock %} {% block content_main %}
   <a
     href="{{url_for('course', university_acro=university.acronym, course=course.name_combined)}}"
     class="list-group-item list-group-item-action"
-    >{{course.name_combined}}</a
+    >{{course.name_combined}} - {{course.name}}</a
   >
   {% endfor %}
 </div>
 
 <!-- <a href="#" class="list-group-item list-group-item-action">EECS 581</a> -->
 
-<a href="{{url_for('create_course')}}"
+<a href="{{url_for('create_course', university_acro=university.acronym)}}"
   ><button type="button" class="btn btn-dark mt-4">Create Course</button></a
 >
 {% endblock %}

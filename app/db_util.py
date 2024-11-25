@@ -278,6 +278,41 @@ def download_syllabus(filename : str, course_name_combined : str) :
     # to true 
     return send_file(file_stream, as_attachment=False, download_name=filename) 
 
+################################################################################
+
+def search_for_university(search_content : str): 
+    """
+    Return a list of universities corresponding to search_content
+
+    :param search_content: the universities we are searching for  
+    """
+    searched_universities = query("""SELECT acronym, name FROM universities WHERE acronym LIKE :search_acro OR name LIKE :search_name""", ({"search_acro": '%' + search_content + '%', "search_name": '%' + search_content + '%'}))
+
+
+    return [University.get_university_by_acronym(uni[0]) for uni in searched_universities]
+
+
+def search_for_course(search_content : str, university_acro : str): 
+    """
+    Return a list of universities corresponding to search_content
+
+
+    :param search_content: the universities we are searching for  
+    """
+
+    uni = University.get_university_by_acronym(university_acro)
+
+    # TODO: Add the ability for user to search for a course by department
+    searched_courses = query("""SELECT id, name, course_number, university FROM courses WHERE (name LIKE :search_name OR course_number LIKE :search_course_number) AND university == :university_id""", ({"search_name": '%' + search_content + '%', "search_course_number": '%' + search_content + '%', "university_id": uni.id})) 
+    # print(searched_courses, uni.id)
+
+    courses = [Course.get_course_by_id(c[0]) for c in searched_courses]
+    return courses
+
+
+
+
+
 
 
     
