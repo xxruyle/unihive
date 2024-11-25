@@ -1,95 +1,166 @@
+/* Author of updated CSS code - Victor */
+
+/* Theme Variables */
+:root {
+    --background-color: #f5f7fa;
+    --text-color: #2c3e50;
+    --primary-color: #3498db;
+    --secondary-color: #95a5a6;
+    --accent-color: #e74c3c;
+    --card-bg-color: #ffffff;
+    --card-shadow: rgba(0, 0, 0, 0.1);
+    --link-hover-bg: #ecf0f1;
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+}
+
+[data-theme="dark"] {
+    --background-color: #1e1e2e;
+    --text-color: #ecf0f1;
+    --primary-color: #2980b9;
+    --secondary-color: #7f8c8d;
+    --accent-color: #c0392b;
+    --card-bg-color: #2c3e50;
+    --card-shadow: rgba(255, 255, 255, 0.1);
+    --link-hover-bg: #34495e;
+}
+
+/* Global Reset */
 * {
-    font-family: "PT Serif", serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Roboto", sans-serif;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 6px var(--card-shadow);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    margin-right: 1rem;
+    transition: color var(--transition-speed);
+}
+
+.navbar a:hover {
+    color: var(--accent-color);
 }
 
 /* Sidebar Styles */
 .sidebar {
     position: fixed;
     top: 55px;
-    /* To adjust for the navbar height */
     left: 0;
     width: 250px;
-    height: 100vh;
-    /* Full height minus navbar height */
-    background-color: #dde5ed;
-    color: #003459;
-    padding-top: 20px;
+    height: calc(100vh - 55px);
+    background-color: var(--card-bg-color);
+    color: var(--text-color);
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    font-size: .80em;
-    box-shadow: 1px 1px 1px #d7d2cb;
+    font-size: 0.8rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px var(--card-shadow);
 }
-
-h1,
-h2,
-h3,
-h4,
-h5 {
-    color: #971b2f;
-
-}
-
-.navbar-custom {
-    background-color: #003459;
-}
-
-.btn,
-.navbar-toggler {
-    border: 0;
-    border-radius: .2em;
-    background-color: #8e9fbc;
-    margin: auto;
-    color: white;
-
-}
-
 
 .sidebar a {
-    margin: 10px;
-    border-radius: 3px;
-    color: #003459;
-    text-decoration: none;
-    padding: 12px 20px;
-    text-align: left;
     display: block;
-    transition: background-color 0.3s;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
 .sidebar a:hover {
-    background-color: #ff3042;
+    background-color: var(--link-hover-bg);
+    color: var(--primary-color);
 }
 
 .sidebar-header {
-    margin-top: 2em;
-    color: #971b2f;
-    padding: 10px 20px;
-
+    margin-top: 2rem;
+    color: var(--accent-color);
+    padding: 0.5rem 1rem;
 }
 
-/* Content Styles */
+/* Content Area */
 .content {
     margin-left: 250px;
-    /* Space for the sidebar */
-    padding: 20px;
     margin-top: 60px;
-    /* Space for the navbar */
+    padding: 2rem;
 }
 
-/* Navbar Styles */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1030;
-    background-color: #003171;
-    color: white;
-    /* To ensure it sits above the sidebar */
+/* Card Styles */
+.card {
+    background-color: var(--card-bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px var(--card-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
 }
 
-.navbar-brand,
-.nav-link {
-    color: white;
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px var(--card-shadow);
+}
+
+.card-title {
+    font-weight: bold;
+}
+
+/* Button Styles */
+.btn {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition-speed), transform var(--transition-speed);
+}
+
+.btn:hover {
+    background-color: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary-color);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+p {
+    margin-bottom: 1rem;
 }
 
 /* Responsive Styles */
@@ -111,115 +182,4 @@ h5 {
     .content {
         margin-left: 150px;
     }
-}
-
-.card {
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.card-title {
-    font-weight: bold;
-}
-
-/* Miscellaneous Profile Page Styles */
-.horizontal {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1em;
-}
-
-.horizontal>div {
-    flex: 1;
-}
-
-.horizontal.right-skew>div:first-child {
-    flex: 0.75;
-    min-width: 7.5em;
-    max-width: 15em;
-}
-
-#profile-picture {
-    width: 100%;
-    aspect-ratio: 1;
-}
-
-.sub-header {
-    margin: 1.5em 0 0.25em 0;
-    font-size: 1.25em;
-}
-
-.side-note {
-    font-style: italic;
-    color: rgba(0, 0, 0, 0.75);
-    margin: 0;
-}
-
-.profile-card {
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    padding: 2em;
-    margin-top: 1.5em;
-}
-
-.profile-card:first-child {
-    margin-top: 0;
-}
-
-.follow-wrapper {
-    display: block;
-    padding-top: 5px;
-    text-decoration: none !important;
-}
-
-.follow-wrapper:first-child {
-    padding-top: 0;
-}
-
-.follow-cell {
-    width: 100%;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    padding: 5px 5px 5px 0.5em;
-}
-
-.column-header {
-    font-size: 1.1em;
-    color: rgba(0, 0, 0, 0.75);
-    font-style: italic;
-    margin: 0;
-}
-
-a.big-link {
-    text-decoration: none;
-    display: block;
-    color: unset;
-}
-
-a.big-link:hover {
-    color: unset;
-}
-
-.pt-serif-regular {
-    font-family: "PT Serif", serif;
-    font-weight: 400;
-    font-style: normal;
-}
-
-.pt-serif-bold {
-    font-family: "PT Serif", serif;
-    font-weight: 700;
-    font-style: normal;
-}
-
-.pt-serif-regular-italic {
-    font-family: "PT Serif", serif;
-    font-weight: 400;
-    font-style: italic;
-}
-
-.pt-serif-bold-italic {
-    font-family: "PT Serif", serif;
-    font-weight: 700;
-    font-style: italic;
 }
