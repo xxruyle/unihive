@@ -22,7 +22,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -56,6 +56,7 @@
 
         <!-- Right side - Profile/Login -->
         <div class="d-flex align-items-center">
+          <button id="theme-toggle" class="btn btn-outline-light btn-sm me-2">Switch to Dark Mode</button>
           {% if SESSION.current_user_id %}
           <span class="text-light mr-3"
             >Logged in, {{ USERS[SESSION.current_user_id].username }}</span
@@ -92,7 +93,7 @@
         </div>
       </div>
     </nav>
-
+    <script src="{{ url_for('static', filename='theme.js') }}"></script>
     <style>
       .navbar {
         padding: 0.5rem 1rem;
