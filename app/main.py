@@ -80,7 +80,13 @@ def home():
     Route function for root page home.html
     Base html Template Dependecies: followed universities, followed courses
     '''
-    return render_template('home.html')
+    posts = [Post(*params) for params in query(
+        """
+        SELECT id, created, title, content, author, course FROM posts
+        ORDER BY created DESC;
+        """
+    )]
+    return render_template('home.html', posts=posts)
 
 
 def login_required(f):

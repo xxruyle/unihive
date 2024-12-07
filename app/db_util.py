@@ -309,11 +309,19 @@ def search_for_course(search_content : str, university_acro : str):
     courses = [Course.get_course_by_id(c[0]) for c in searched_courses]
     return courses
 
+################################################################################
 
-
-
-
-
+def get_all_posts():
+    """
+    Retrieve all posts from the database, ordered by creation date (most recent first).
+    """
+    params = query(
+        """
+        SELECT id, created, title, content, author, course FROM posts
+        ORDER BY created DESC;
+        """
+    )
+    return [Post(*row) for row in params]  # Construct Post objects for each row
 
     
 
