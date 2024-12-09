@@ -1,0 +1,205 @@
+<!-- Filename: course.py -->
+<!-- Description: This html file shows the course home page of the app  which allows the user to see course info, and submit new course info and professors -->
+<!-- Inputs: base.html -->
+<!-- Output:  -->
+<!-- Authors: Xavier Ruyle -->
+<!-- Creation Date: 10/24/2024 -->
+
+{% extends 'base.html' %}
+
+{% block content_title %}{{course.name_combined}}{% endblock %}
+{% block content_subtitle %}
+<form action="{{course.combined_name}}" method="post">
+<input type="hidden">
+<button type="submit" class="btn btn-info" name="follow-btn" value="follow">Follow</button>
+</form><br>
+Posts
+{% endblock %}
+
+{% block content_main %}
+
+    <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Post</button>
+    <!-- Sort by  -->
+<form method="POST">
+  <div class="row w-10 mb-2">
+    <div class="col">
+      <input
+        class="form-control w-20"
+        type="text"
+        placeholder="Sort By"
+        readonly
+      />
+      <select
+        class="form-control form-control-sm"
+        id="sort-type"
+        name="sort-type"
+        for="sort-type"
+      >
+        <option>Date Created</option>
+        <option>Popularity</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Sort</button>
+  </div>
+</form>
+
+<!-- Modal Post -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Post</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form action="{{ url_for('create_post', course_id=course.id) }}" method="post" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="post-title">Title</label>
+            <input type="text" class="form-control" id="post-title" name="post-title" placeholder="Title" required>
+          </div>
+          <div class="form-group">
+            <label for="post-body">Post Body</label>
+            <textarea class="form-control" id="post-body" name="post-body" rows="3" required></textarea>
+          </div>
+          <!-- Add the file input for image upload -->
+          <div class="form-group">
+            <label for="post-image">Upload Image (Optional)</label>
+            <input type="file" class="form-control" id="post-image" name="post-image" accept="image/*">
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Submit Post</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+        <!-- Posts -->
+        {% for post in course.posts %}
+        <a class="big-link" href="{{url_for('post', university_acro=course.university.acronym, course_name=course.name_combined, post_identifier=post.id)}}">
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                  <img src="https://via.placeholder.com/40" class="rounded-circle mr-2" alt="User">
+                  <div class="px-3">
+                      <h6 class="mb-1">{{post.author}}</h6>
+                      <small class="text-muted">Posted on {{post.created}}</small>
+                  </div>
+              </div>
+              <h5 class="card-title">{{post.title}}</h5>
+              <p class="card-text">{{post.content}}</p>
+              <a href="#" class="btn btn-primary">Replies ({{post.replies | length}})</a>
+              <div class="mt-2">
+                  <small>Posted in <a href="{{url_for('course', university_acro=course.university.acronym, course=course.name_combined)}}" class="text-primary">{{course.university.acronym}}/{{course.name_combined}}</a></small>
+              </div>
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+
+
+
+    <h2>Info</h2>
+
+    <p>Average Grade: {{course.average_grade}}</p>
+    <p>Average Difficulty (1-5): {{course.average_difficulty}}</p>
+    <p>Credit Hours: {{course.credit_hours}}</p>
+
+    <h4>Submit Info<h4>
+    <form action="{{course.combined_name}}" method="post">
+    <div class="row">
+      <div class="col">
+        <input class="form-control w-100" type="text" placeholder="Grade" readonly>
+        <select class="form-control form-control-sm" id="grade" name="grade" for="grade">
+          <option>A</option>
+          <option>B</option>
+          <option>C</option>
+          <option>D</option>
+          <option>F</option>
+        </select>
+      </div>
+      <div class="col">
+        <input class="form-control w-100" type="text" placeholder="Difficulty" readonly>
+        <select class="form-control form-control-sm" id="name" name="difficulty" for="difficulty">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
+      <div class="col">
+        <input class="form-control w-100" type="text" placeholder="Credit Hours" readonly>
+        <select class="form-control form-control-sm" id="credit-hours" name="credit-hours" for="credit-hours">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    <form>
+
+    <h2 class="mt-5">Past Professors</h2> 
+    <div class="card mb-3" style="width: 18rem; font-size: 14px">
+        {% for professor in course.instructors %}
+          <ul class="list-group list-group-flush">
+              <li class="list-group-item">{{professor}}</li>
+          </ul>
+        {% endfor %}
+    </div>
+
+    <form action="{{course.name_combined}}" method="post">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="">First and Last Name</span>
+          </div>
+          <input type="text" class="first-name" name="first-name">
+          <input type="text" class="last-name" name="last-name">
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+
+    <h2 class="mt-3">Syllabus</h2>
+    <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#syllabusModal">Upload</button>
+    <!-- Modal Post -->
+    <div class="modal fade" id="syllabusModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Syllabus</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+          <form action="{{course.combined_name}}" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label for="syllabusFile" class="form-label">Syllabus File</label>
+              <input class="form-control" type="file" id="syllabusFile" name="syllabusFile" required>
+            </div>
+          </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
+    <br>
+    <div class="d-flex flex-column mb-3">
+        {% for filename in course.syllabus_names%} 
+        <a href="{{url_for('download', filename=filename, coursename=course.name_combined)}}">{{filename}}</a>
+        {% endfor %}
+    <div>
+{% endblock %}
+
+
