@@ -121,4 +121,11 @@ class User:
         """
         pass
 
+    @staticmethod
+    def get_user_by_id(user_id):
+        params = query("SELECT id, username, profile_img FROM users WHERE id = ?", (user_id,), count=1)
+        if params:
+            return User(*params[0])  # Return a User object based on the retrieved data
+        return None
+
 USERS = {SESSION.current_user_id: User(1, "DEV")}  # USERS container (user id as key, User object instance as value)
